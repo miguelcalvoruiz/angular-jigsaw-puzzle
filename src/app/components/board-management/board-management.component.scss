@@ -1,13 +1,11 @@
-.board-management-container {
-    height: 100%;
-}
-
 .option-list {
     height: 100%;
+    position: fixed;
     display: flex;
+    z-index: 1;
     flex-direction: column;
     justify-content: center;
-    background-color: #1a1c27;
+    background-color: var(--dark-gray);
     padding: 10px;
 }
 

@@ -27,6 +27,14 @@ export class BoardManagementComponent implements OnInit, OnDestroy {
     this.boardSettingsSubscription.unsubscribe();
   }
 
+  zoomIn() {
+    this.gameService.zoomIn();
+  }
+
+  zoomOut() {
+    this.gameService.zoomOut();
+  }
+
   togglePreview() {
     this.gameService.togglePreview();
   }

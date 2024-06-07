@@ -145,3 +145,18 @@ body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(68, 68, 68, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dark-gray);
+    ;
+    border-radius: 25px;
+}

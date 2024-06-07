@@ -15,7 +15,7 @@ import { BoardSettings } from '../../models/boardSettiings';
 })
 export class NewGameComponent implements OnInit {
 
-  gameSettingsForm  = this.fb.group({
+  gameSettingsForm = this.fb.group({
     pieces: [null as number | null, Validators.required],
     rows: [null as number | null, Validators.required],
     cols: [null as number | null, Validators.required],
@@ -39,7 +39,7 @@ export class NewGameComponent implements OnInit {
   constructor(private gameService: GameService, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
-    
+
   }
 
   onFileSelected(event: any) {
@@ -83,7 +83,13 @@ export class NewGameComponent implements OnInit {
   }
 
   startGame() {
-    const boardSettings: BoardSettings = { preview: false, fullscreen: false};
+    const boardSettings: BoardSettings = {
+      zoom: 1,
+      zoomLevel: 0,
+      zoomChange: 0,
+      preview: false,
+      fullscreen: false
+    };
     if (this.gameSettingsForm.valid) {
       const gameSettings: GameSettings = {
         pieces: this.gameSettingsForm.value.pieces as number,
@@ -98,5 +104,5 @@ export class NewGameComponent implements OnInit {
       console.error('El formulario no es válido');
     }
   }
-  
+
 }

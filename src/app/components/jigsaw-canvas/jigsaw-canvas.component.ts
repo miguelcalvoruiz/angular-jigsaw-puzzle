@@ -27,7 +27,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   activePiece: Piece | null = null;
 
-  scale = { canvas: 1.5, jigsaw: 0.75 };
+  scale = { canvas: 1.5, jigsaw: 0.6 };
   alpha = 0.4;
 
   jigsawInitialized = false;
@@ -40,6 +40,16 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.boardSettings = boardSettings;
 
         if (this.jigsawInitialized) {
+          if (boardSettings.zoomChange != 0) {
+            const pieces = this.jigsaw.pieces;
+
+            this.initializeJigsaw();
+
+            pieces.forEach(piece => {
+              this.transformPiece(piece);
+            });
+          }
+
           this.drawJigsaw();
         }
       }
@@ -103,7 +113,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameSettings.rows, this.gameSettings.cols,
       this.imageElement.nativeElement.width,
       this.imageElement.nativeElement.height,
-      innerWidth, innerHeight, this.scale.jigsaw
+      innerWidth, innerHeight, this.scale.jigsaw * this.boardSettings.zoom
     );
   }
 
@@ -118,6 +128,19 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   clearCanvas() {
     this.context.clearRect(
       this.canvas.position.x, this.canvas.position.y,
+      this.canvas.size.width, this.canvas.size.height
+    );
+    const gradient = this.context.createLinearGradient(
+      this.canvas.position.x, this.canvas.position.y, 
+      this.canvas.position.x, this.canvas.position.y + this.canvas.size.height
+    );
+
+    gradient.addColorStop(0, 'rgba(207, 128, 48, 0.5)');
+    gradient.addColorStop(1, 'rgba(26, 28, 39, 0.8)');
+
+    this.context.fillStyle = gradient;
+    this.context.fillRect(
+      this.canvas.position.x, this.canvas.position.y, 
       this.canvas.size.width, this.canvas.size.height
     );
   }
@@ -146,19 +169,26 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   prepareJigsaw() {
     for (let row = 0; row < this.jigsaw.size.rows; row++) {
       for (let col = 0; col < this.jigsaw.size.cols; col++) {
-        const piece = this.createPiece(row, col);
-        this.drawPiece(piece);
+        this.createPiece(row, col);
       }
     }
 
+    this.drawJigsaw();
     this.jigsawInitialized = true;
   }
 
   createPiece(row: number, col: number) {
     const sourceX = this.jigsaw.sourcePieceSize.width * col;
     const sourceY = this.jigsaw.sourcePieceSize.height * row;
-    const destX = Math.random() * (innerWidth - this.jigsaw.destPieceSize.width);
-    const destY = Math.random() * (innerHeight - this.jigsaw.destPieceSize.height);
+
+    let max = innerWidth - 3 * this.jigsaw.destPieceSize.width;
+    let min = this.jigsaw.destPieceSize.width;
+    const destX = Math.floor(Math.random() * (max - min) + min);
+
+    max = innerHeight - 2 * this.jigsaw.destPieceSize.height;
+    min = this.jigsaw.destPieceSize.height;
+    const destY = Math.floor(Math.random() * (max - min) + min);
+
     const targetX = this.jigsaw.position.x + col * this.jigsaw.destPieceSize.width;
     const targetY = this.jigsaw.position.y + row * this.jigsaw.destPieceSize.height;
 
@@ -170,8 +200,24 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.jigsaw.addPiece(piece);
+  }
 
-    return piece;
+  transformPiece(piece: Piece) {
+    const vectorX = piece.destPosition.x - innerWidth / 2;
+    const vectorXScaled = vectorX * this.boardSettings.zoomChange;
+    const destX = vectorXScaled + innerWidth / 2;
+
+    const vectorY = piece.destPosition.y - innerHeight / 2;
+    const vectorYScaled = vectorY * this.boardSettings.zoomChange;
+    const destY = vectorYScaled + innerHeight / 2;
+
+    const targetX = this.jigsaw.position.x + piece.col * this.jigsaw.destPieceSize.width;
+    const targetY = this.jigsaw.position.y + piece.row * this.jigsaw.destPieceSize.height;
+
+    piece.setDestPosition(new Coordinates(destX, destY));
+    piece.setTargetPosition(new Coordinates(targetX, targetY));
+
+    this.jigsaw.addPiece(piece);
   }
 
   drawPiece(piece: Piece) {
@@ -180,6 +226,11 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       piece.sourcePosition.x, piece.sourcePosition.y,
       this.jigsaw.sourcePieceSize.width, this.jigsaw.sourcePieceSize.height,
       piece.destPosition.x, piece.destPosition.y,
+      this.jigsaw.destPieceSize.width, this.jigsaw.destPieceSize.height
+    );
+
+    this.context.strokeRect(
+      piece.destPosition.x, piece.destPosition.y, 
       this.jigsaw.destPieceSize.width, this.jigsaw.destPieceSize.height
     );
   }
@@ -215,7 +266,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       if (piece != this.activePiece) {
         piece.setPositionBasedOnVector(vector);
       } else {
-        piece.setPosition(newPosition);
+        piece.setDestPosition(newPosition);
       }
     });
 
@@ -273,8 +324,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const rect = this.canvasElement.nativeElement.getBoundingClientRect();
 
     return {
-      x: event.pageX - rect.left,
-      y: event.pageY - rect.top
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
     };
   }
 

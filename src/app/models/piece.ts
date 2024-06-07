@@ -63,9 +63,13 @@ export class Piece {
         );
     }
 
-    public setPosition(coordinates: Coordinates) {
+    public setDestPosition(coordinates: Coordinates) {
         this._destPosition = coordinates;
     }
+
+    public setTargetPosition(coordinates: Coordinates) {
+        this._targetPosition = coordinates;
+      }
 
     public setPositionBasedOnVector(vector: Coordinates) {
         this._destPosition.addVector(vector);
@@ -93,7 +97,7 @@ export class Piece {
         );
 
         relativePosition.addVector(vector);
-        this.setPosition(relativePosition);
+        this.setDestPosition(relativePosition);
     }
 
     public setPositionToTarget() {

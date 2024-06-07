@@ -22,10 +22,34 @@ export class GameService {
     this.boardSettings.next(boardSettings);
   }
 
+  zoomIn() {
+    this.boardSettings$.pipe(take(1)).subscribe(settings => {
+      if (settings && settings.zoomLevel < 5) {
+        settings.zoom *= 10/9;
+        settings.zoomChange = 10/9;
+        settings.zoomLevel++;
+        this.boardSettings.next(settings);
+      }
+    });
+  }
+
+
+  zoomOut() {
+    this.boardSettings$.pipe(take(1)).subscribe(settings => {
+      if (settings && settings.zoomLevel > -5) {
+        settings.zoom *= 9/10;
+        settings.zoomChange = 9/10;
+        settings.zoomLevel--;
+        this.boardSettings.next(settings);
+      }
+    });
+  }
+
   togglePreview() {
     this.boardSettings$.pipe(take(1)).subscribe(settings => {
       if (settings) {
         settings.preview = !settings.preview;
+        settings.zoomChange = 0;
         this.boardSettings.next(settings);
       }
     });
@@ -35,6 +59,7 @@ export class GameService {
     this.boardSettings$.pipe(take(1)).subscribe(settings => {
       if (settings) {
         settings.fullscreen = !settings.fullscreen;
+        settings.zoomChange = 0;
         this.boardSettings.next(settings);
       }
     });
