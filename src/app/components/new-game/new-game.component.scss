@@ -1,0 +1,166 @@
+.new-game-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(68, 68, 68, 0.7) 50%, rgba(123, 251, 146, 0.5)), url("../../../assets/background.jpg");
+    background-position: top;
+    animation: background-position 50s infinite;
+}
+
+.new-game-form {
+    width: 800px;
+    align-items: center;
+    background-color: rgba(68, 68, 68, 0.8);
+    padding: 50px;
+}
+
+.form-control-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 25px 0;
+
+    .step {
+        display: flex;
+        align-items: center;
+        width: 50%;
+        color: var(--highlight-green);
+
+        .number {
+            display: inline-block;
+            width: 60px;
+            text-align: center;
+            background-color: var(--dark-gray);
+            font-size: 3rem;
+            font-weight: bold;
+            border: 1px solid var(--highlight-green);
+            border-radius: 50%;
+            filter: drop-shadow(0 0 0.1rem var(--highlight-green));
+        }
+
+        .text {
+            font-size: 1.5rem;
+            margin-left: 25px;
+        }
+    }
+
+    input[type=file],
+    input[type=radio] {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+}
+
+.file-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    font-size: 5rem;
+    color: var(--dark-gray);
+    background-image: linear-gradient(to bottom, var(--highlight-green) 50%, var(--dark-gray) 50%);
+    background-size: 100% 200%;
+    border-radius: 25px;
+    padding: 25px;
+    transition: all 1s;
+
+    &:hover {
+        color: var(--highlight-green);
+        background-position: 0 -100%;
+    }
+}
+
+.file-name {
+    font-size: 0.7rem;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 50%;
+}
+
+.radio-button {
+    position: relative;
+    text-align: center;
+    width: 20%;
+    font-size: 1.5rem;
+    color: var(--dark-gray);
+    background-image: linear-gradient(to bottom, var(--highlight-green) 50%, var(--dark-gray) 50%);
+    background-size: 100% 200%;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 1s;
+
+    &:hover {
+        color: var(--highlight-green);
+        background-position: 0 -100%;
+    }
+}
+
+.selected {
+    color: var(--highlight-green);
+    background-position: 0 -100%;
+}
+
+.start {
+    font-size: 7rem;
+    color: var(--highlight-green);
+    transition: all 1s;
+    background: transparent;
+    border: none;
+    animation: glowing 2s infinite;
+
+    &:hover {
+        cursor: pointer;
+        transform: rotateZ(180deg);
+    }
+}
+
+@keyframes background-position {
+    0% {
+        background-position: top;
+    }
+
+    20% {
+        background-position: right;
+    }
+
+    40% {
+        background-position: center;
+    }
+
+    60% {
+        background-position: bottom;
+    }
+
+    80% {
+        background-position: left;
+    }
+
+    100% {
+        background-position: top;
+    }
+}
+
+@keyframes glowing {
+    0% {
+        filter: drop-shadow(0 0 0.25rem var(--highlight-green));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 0.4rem var(--highlight-green));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 0.25rem var(--highlight-green));
+    }
+}

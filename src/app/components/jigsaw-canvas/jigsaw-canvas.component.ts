@@ -1,17 +1,24 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Piece } from '../../models/piece';
 import { Canvas } from '../../models/canvas';
 import { Jigsaw } from '../../models/jigsaw';
 import { Coordinates } from '../../models/coordinates';
+import { GameSettings } from '../../models/gameSettings';
+import { GameService } from '../../services/game.service';
+import { Subscription } from 'rxjs';
+import { BoardSettings } from '../../models/boardSettiings';
 
 @Component({
   selector: 'app-jigsaw-canvas',
   templateUrl: './jigsaw-canvas.component.html',
   styleUrls: ['./jigsaw-canvas.component.scss']
 })
-export class JigsawCanvasComponent implements OnInit, AfterViewInit {
+export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasElement!: ElementRef<HTMLCanvasElement>;
   @ViewChild('image') imageElement!: ElementRef<HTMLImageElement>;
+  @Input() gameSettings!: GameSettings;
+  boardSettings!: BoardSettings;
+  boardSettingsSubscription!: Subscription;
 
   context!: CanvasRenderingContext2D;
 
@@ -20,24 +27,43 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
 
   activePiece: Piece | null = null;
 
-  size = { rows: 7, cols: 10 };
   scale = { canvas: 1.5, jigsaw: 0.75 };
   alpha = 0.4;
 
-  constructor() { }
+  jigsawInitialized = false;
+
+  constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
+    this.boardSettingsSubscription = this.gameService.boardSettings$.subscribe(boardSettings => {
+      if (boardSettings) {
+        this.boardSettings = boardSettings;
+
+        if (this.jigsawInitialized) {
+          this.drawJigsaw();
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.initializeContext();
+    this.initializeContext();
+    this.initializeImageElement();
 
+    setTimeout(() => {
       this.adjustCanvas();
       this.resetCanvasState();
 
       this.prepareJigsaw();
-    }, 1000);
+    }, 500);
+  }
+
+  ngOnDestroy(): void {
+    this.boardSettingsSubscription.unsubscribe();
+  }
+
+  initializeImageElement() {
+    this.imageElement.nativeElement.src = URL.createObjectURL(this.gameSettings.image);
   }
 
   initializeContext() {
@@ -51,9 +77,12 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
   }
 
   resetCanvasState() {
+    this.manageFullscreen();
     this.clearCanvas();
     this.displayBoundaries();
-    this.displayBackground();
+    if (this.boardSettings.preview) {
+      this.displayBackground();
+    }
   }
 
   initializeCanvas() {
@@ -71,11 +100,19 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
 
   initializeJigsaw() {
     this.jigsaw = new Jigsaw(
-      this.size.rows, this.size.cols,
+      this.gameSettings.rows, this.gameSettings.cols,
       this.imageElement.nativeElement.width,
       this.imageElement.nativeElement.height,
       innerWidth, innerHeight, this.scale.jigsaw
     );
+  }
+
+  manageFullscreen() {
+    if (this.boardSettings.fullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
   }
 
   clearCanvas() {
@@ -113,6 +150,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
         this.drawPiece(piece);
       }
     }
+
+    this.jigsawInitialized = true;
   }
 
   createPiece(row: number, col: number) {
@@ -157,7 +196,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
     for (let i = this.jigsaw.pieces.length - 1; i >= 0 && !this.activePiece; i--) {
       const piece = this.jigsaw.pieces[i];
 
-      if (!piece.locked && this.isMouseOverPiece(piece, event.pageX, event.pageY)) {
+      if (!piece.locked && this.isMouseOverPiece(piece, event)) {
         this.activePiece = piece;
       }
     }
@@ -188,7 +227,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
 
     const adjacentPieces = this.getGroupOfAdjacentPieces(this.activePiece);
 
-    if (this.isPieceInTargetPosition(this.activePiece, event.pageX, event.pageY)) {
+    if (this.isPieceInTargetPosition(this.activePiece, event)) {
       adjacentPieces.forEach(piece => {
         this.jigsaw.movePieceToBottom(piece);
         piece.setPositionToTarget();
@@ -200,6 +239,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
       const connector = this.findConnectionsBetweenPieces(adjacentPieces);
 
       if (connector) {
+        this.jigsaw.movePieceToTop(connector);
+
         adjacentPieces.forEach(piece => {
           this.jigsaw.movePieceToTop(piece);
           piece.setPositionBasedOnReferencePiece(connector);
@@ -228,34 +269,51 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit {
     return allAdjacentPieces;
   }
 
+  getMousePosition(event: MouseEvent) {
+    const rect = this.canvasElement.nativeElement.getBoundingClientRect();
+
+    return {
+      x: event.pageX - rect.left,
+      y: event.pageY - rect.top
+    };
+  }
+
   calculateActivePiecePosition(event: MouseEvent) {
+    const position = this.getMousePosition(event);
+
     return new Coordinates(
-      event.pageX - this.jigsaw.destPieceSize.width / 2,
-      event.pageY - this.jigsaw.destPieceSize.height / 2
+      position.x - this.jigsaw.destPieceSize.width / 2,
+      position.y - this.jigsaw.destPieceSize.height / 2
     );
   }
 
   calculateVector(event: MouseEvent, currentPosition: Coordinates) {
+    const position = this.getMousePosition(event);
+
     return new Coordinates(
-      event.pageX - this.jigsaw.destPieceSize.width / 2 - currentPosition.x,
-      event.pageY - this.jigsaw.destPieceSize.height / 2 - currentPosition.y
+      position.x - this.jigsaw.destPieceSize.width / 2 - currentPosition.x,
+      position.y - this.jigsaw.destPieceSize.height / 2 - currentPosition.y
     );
   }
 
-  isMouseOverPiece(piece: Piece, x: number, y: number) {
-    if (x >= piece.destPosition.x && x <= piece.destPosition.x + this.jigsaw.destPieceSize.width
-      && y >= piece.destPosition.y && y <= piece.destPosition.y + this.jigsaw.destPieceSize.height) {
+  isMouseOverPiece(piece: Piece, event: MouseEvent) {
+    const position = this.getMousePosition(event);
+
+    if (position.x >= piece.destPosition.x && position.x <= piece.destPosition.x + this.jigsaw.destPieceSize.width
+      && position.y >= piece.destPosition.y && position.y <= piece.destPosition.y + this.jigsaw.destPieceSize.height) {
       return true;
     } else {
       return false;
     }
   }
 
-  isPieceInTargetPosition(piece: Piece, x: number, y: number) {
-    if (x >= piece.targetPosition.x + this.jigsaw.offset.x
-      && x <= piece.targetPosition.x + this.jigsaw.destPieceSize.width - this.jigsaw.offset.x
-      && y >= piece.targetPosition.y + this.jigsaw.offset.x
-      && y <= piece.targetPosition.y + this.jigsaw.destPieceSize.height - this.jigsaw.offset.y) {
+  isPieceInTargetPosition(piece: Piece, event: MouseEvent) {
+    const position = this.getMousePosition(event);
+
+    if (position.x >= piece.targetPosition.x + this.jigsaw.offset.x
+      && position.x <= piece.targetPosition.x + this.jigsaw.destPieceSize.width - this.jigsaw.offset.x
+      && position.y >= piece.targetPosition.y + this.jigsaw.offset.x
+      && position.y <= piece.targetPosition.y + this.jigsaw.destPieceSize.height - this.jigsaw.offset.y) {
       return true;
     } else {
       return false;

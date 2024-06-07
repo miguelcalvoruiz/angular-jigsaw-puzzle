@@ -1,0 +1,37 @@
+<div class="board-management-container">
+    <ul class="option-list">
+        <li class="option" class="option">
+            <button mat-mini-fab color="primary">
+                <mat-icon>zoom_in</mat-icon>
+            </button>
+        </li>
+        <li class="option">
+            <button mat-mini-fab color="primary">
+                <mat-icon>zoom_out</mat-icon>
+            </button>
+        </li>
+        <li class="option">
+            <button mat-mini-fab color="primary">
+                <mat-icon>image</mat-icon>
+            </button>
+        </li>
+        <li class="option">
+            <button mat-mini-fab color="primary" (click)="togglePreview()">
+                <mat-icon *ngIf="!boardSettings.preview">visibility</mat-icon>
+                <mat-icon *ngIf="boardSettings.preview">visibility_off</mat-icon>
+            </button>
+        </li>
+        <li class="option">
+            <button mat-mini-fab color="primary">
+                <mat-icon>timer</mat-icon>
+                <mat-icon>timer_off</mat-icon>
+            </button>
+        </li>
+        <li class="option">
+            <button mat-mini-fab color="primary" (click)="toggleFullscreen()">
+                <mat-icon *ngIf="!boardSettings.fullscreen">fullscreen</mat-icon>
+                <mat-icon *ngIf="boardSettings.fullscreen">fullscreen_exit</mat-icon>
+            </button>
+        </li>
+    </ul>
+</div>

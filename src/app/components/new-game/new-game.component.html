@@ -1,0 +1,47 @@
+<div class="new-game-container">
+    <form [formGroup]="gameSettingsForm" (ngSubmit)="startGame()" class="new-game-form">
+        <div @fadeEnterAnimation class="form-control-wrapper">
+            <label class="step">
+                <span class="number">1</span>
+                <span class="text">Sube tu imagen</span>
+            </label>
+            <div class="file-input" [ngClass]="{selected: gameSettingsForm.controls['image'].value}">
+                <fa-icon [icon]="faUpload"></fa-icon>
+                <input type="file" accept="image/*" (change)="onFileSelected($event)">
+                <span *ngIf="gameSettingsForm.controls['image'].value" class="file-name">
+                    <ng-container *ngIf="gameSettingsForm.controls['image'].value.name.length <= 17">
+                        {{gameSettingsForm.controls['image'].value.name}}
+                    </ng-container>
+                    <ng-container *ngIf="gameSettingsForm.controls['image'].value.name.length > 17">
+                        {{gameSettingsForm.controls['image'].value.name | slice:0:15}}...
+                    </ng-container>
+                </span>
+            </div>
+        </div>
+
+        <div @fadeEnterAnimation *ngIf="gameSettingsForm.controls['image'].value" class="form-control-wrapper">
+            <label class="step">
+                <span class="number">2</span>
+                <span class="text">Elige el número de piezas del rompecabezas.</span>
+            </label>
+            <div class="radio-group">
+                <div *ngFor="let option of sizing; let i = index" class="radio-button"
+                    [ngClass]="{selected: gameSettingsForm.controls['pieces'].value == option.pieces}">
+                    <label [for]="option.pieces">{{option.pieces}}</label>
+                    <input type="radio" [id]="option.pieces" formControlName="pieces" [value]="option.pieces"
+                        (change)="updateRowsAndCols(i)">
+                </div>
+            </div>
+        </div>
+
+        <div @fadeEnterAnimation @fadeLeaveAnimation *ngIf="gameSettingsForm.valid" class="form-control-wrapper">
+            <label class="step">
+                <span class="number">3</span>
+                <span class="text">Jugar</span>
+            </label>
+            <button type="submit" class="start">
+                <fa-icon [icon]="faPuzzlePiece"></fa-icon>
+            </button>
+        </div>
+    </form>
+</div>

@@ -1,5 +1,147 @@
-*, *::before, *::after {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+@use '@angular/material' as mat;
+@include mat.core();
+
+$highlight-green-palette: (
+    50 : #e6fbed,
+    100 : #c1f6d2,
+    200 : #98f1b5,
+    300 : #6feca0,
+    400 : #4ce78d,
+    500 : #2ae27a,
+    600 : #26d971,
+    700 : #21d064,
+    800 : #1bc757,
+    900 : #11b743,
+    A100 : #e6fbed,
+    A200 : #c1f6d2,
+    A400 : #4ce78d,
+    A700 : #21d064,
+    contrast: (50 : #1a1c27,
+        100 : #1a1c27,
+        200 : #1a1c27,
+        300 : #1a1c27,
+        400 : #1a1c27,
+        500 : #1a1c27,
+        600 : #1a1c27,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #1a1c27,
+        A200 : #1a1c27,
+        A400 : #1a1c27,
+        A700 : #1a1c27,
+    )
+);
+
+$purple-palette: (
+    50 : #f3e6fb,
+    100 : #e2c1f6,
+    200 : #d098f1,
+    300 : #bd6fec,
+    400 : #ae4ce7,
+    500 : #9e2ae2,
+    600 : #9326d9,
+    700 : #8521d0,
+    800 : #771bc7,
+    900 : #6311b7,
+    A100 : #f3e6fb,
+    A200 : #e2c1f6,
+    A400 : #ae4ce7,
+    A700 : #8521d0,
+    contrast: (50 : #1a1c27,
+        100 : #1a1c27,
+        200 : #1a1c27,
+        300 : #1a1c27,
+        400 : #1a1c27,
+        500 : #1a1c27,
+        600 : #1a1c27,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #1a1c27,
+        A200 : #1a1c27,
+        A400 : #1a1c27,
+        A700 : #1a1c27,
+    )
+);
+
+$white-palette: (
+    50 : #ffffff,
+    100 : #f3f3f3,
+    200 : #e0e0e0,
+    300 : #c7c7c7,
+    400 : #b3b3b3,
+    500 : #9e9e9e,
+    600 : #8f8f8f,
+    700 : #7b7b7b,
+    800 : #686868,
+    900 : #444444,
+    A100 : #ffffff,
+    A200 : #f3f3f3,
+    A400 : #b3b3b3,
+    A700 : #7b7b7b,
+    contrast: (50 : #1a1c27,
+        100 : #1a1c27,
+        200 : #1a1c27,
+        300 : #1a1c27,
+        400 : #1a1c27,
+        500 : #1a1c27,
+        600 : #1a1c27,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #1a1c27,
+        A200 : #1a1c27,
+        A400 : #1a1c27,
+        A700 : #1a1c27,
+    )
+);
+
+$JigsawPuzzles-primary: mat.define-palette($highlight-green-palette);
+$JigsawPuzzles-accent: mat.define-palette($purple-palette, A200, A100, A400);
+$JigsawPuzzles-warn: mat.define-palette($white-palette);
+
+$JigsawPuzzles-theme: mat.define-light-theme((color: (primary: $JigsawPuzzles-primary,
+                accent: $JigsawPuzzles-accent,
+                warn: $JigsawPuzzles-warn,
+            )));
+
+@include mat.all-component-themes($JigsawPuzzles-theme);
+
+:root {
+    --highlight-green: #7bfb92;
+    --purple: #c15df3;
+    --white: #f3f3f3;
+    --soft-black: rgba(0, 0, 0, 0.05);
+    --transparent-white: rgba(255, 255, 255, 0.5);
+    --very-transparent-white: rgba(255, 255, 255, 0.13);
+    --dark-gray: #444444;
+    --gray: #4c4c4c;
+    --light-gray: #c2c0c0;
+    --medium-gray: #9b9a9a;
+    --light-gray-hover: #aaa;
+    --black: black;
+    --nav-background: #232323;
+    --home-background: rgba(177, 176, 176, 0.102);
+    --body-background: #313131;
+    --green-purple-gradient: linear-gradient(to right, #7bfb92, #c15df3);
+    --green-purple-gradient-webkit: -webkit-linear-gradient(to right, #7bfb92, #c15df3);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }

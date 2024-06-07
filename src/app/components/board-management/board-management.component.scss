@@ -1,0 +1,17 @@
+.board-management-container {
+    height: 100%;
+}
+
+.option-list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #1a1c27;
+    padding: 10px;
+}
+
+.option {
+    list-style-type: none;
+    margin: 5px 0;
+}
