@@ -2,4 +2,8 @@
     font-size: 0.9rem;
     color: var(--highlight-green);
     margin: 5px 10px;
+
+    &::selection {
+        background: transparent;
+    }
 }

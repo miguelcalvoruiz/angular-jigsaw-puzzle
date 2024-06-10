@@ -1,4 +1,4 @@
-<app-transition [condition]="jigsawInitialized"></app-transition>
+<app-transition [condition]="game != undefined && game.started"></app-transition>
 
 <img #image src="" alt="jigsaw image" class="img">
 

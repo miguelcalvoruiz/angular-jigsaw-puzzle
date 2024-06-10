@@ -1,13 +1,16 @@
-import { TabularSize } from "./tabularSize";
+import { Canvas } from "./canvas";
+import { Coordinates } from "./coordinates";
 import { Piece } from "./piece";
 import { Size } from "./size";
-import { Coordinates } from "./coordinates";
+import { TabularSize } from "./tabularSize";
 
 export class Jigsaw {
+    private _canvas: Canvas;
+
     private _size: TabularSize;
+    private _imageSize: Size;
     private _position: Coordinates;
     private _offset: Coordinates;
-    private _scale: number;
     private _ratio: number;
 
     private _pieces: Piece[] = [];
@@ -15,13 +18,13 @@ export class Jigsaw {
     private _destPieceSize: Size;
 
     constructor(
+        canvas: Canvas,
         rows: number, cols: number,
-        imageWidth: number, imageHeight: number,
-        canvasWidth: number, canvasHeight: number,
-        scale: number
+        imageWidth: number, imageHeight: number
     ) {
-        this._scale = scale;
-        this._ratio = scale * Math.min(canvasWidth / imageWidth, canvasHeight / imageHeight);
+        this._canvas = canvas;
+
+        this._ratio = 0.6 * Math.min(canvas.size.width / imageWidth, canvas.size.height / imageHeight);
 
         this._size = new TabularSize(
             imageWidth * this._ratio,
@@ -29,9 +32,11 @@ export class Jigsaw {
             rows, cols
         );
 
+        this._imageSize = new Size(imageWidth, imageHeight);
+
         this._position = new Coordinates(
-            (canvasWidth - this._size.width) / 2,
-            (canvasHeight - this._size.height) / 2
+            (canvas.size.width - this._size.width) / 2,
+            (canvas.size.height - this._size.height) / 2
         );
 
         this._sourcePieceSize = new Size(imageWidth / cols, imageHeight / rows);
@@ -67,8 +72,42 @@ export class Jigsaw {
         return this._offset;
     }
 
-    public addPiece(piece: Piece) {
+    public createPieces() {
+        for (let row = 0; row < this.size.rows; row++) {
+            for (let col = 0; col < this.size.cols; col++) {
+                this.createPiece(row, col);
+            }
+        }
+    }
+
+    private createPiece(row: number, col: number) {
+        const sourceX = this.sourcePieceSize.width * col;
+        const sourceY = this.sourcePieceSize.height * row;
+
+        let max = innerWidth - 3 * this.destPieceSize.width;
+        let min = this.destPieceSize.width;
+        const destX = Math.floor(Math.random() * (max - min) + min);
+
+        max = innerHeight - 2 * this.destPieceSize.height;
+        min = this.destPieceSize.height;
+        const destY = Math.floor(Math.random() * (max - min) + min);
+
+        const targetX = this.position.x + col * this.destPieceSize.width;
+        const targetY = this.position.y + row * this.destPieceSize.height;
+
+        const piece = new Piece(
+            this,
+            row, col,
+            sourceX, sourceY,
+            destX, destY,
+            targetX, targetY
+        );
+
         this._pieces.push(piece);
+    }
+
+    public getPiece(row: number, col: number) {
+        return this.pieces.find(piece => piece.row == row && piece.col == col);
     }
 
     public movePieceToTop(piece: Piece) {
@@ -89,7 +128,102 @@ export class Jigsaw {
         }
     }
 
-    public getPiece(row: number, col: number) {
-        return this.pieces.filter(piece => piece.row == row && piece.col == col)[0];
+    public getGroupOfAdjacentPieces(piece: Piece, allAdjacentPieces: Piece[] = []) {
+        const adjacentPieces = piece.connections
+            .filter(connection => connection.connected)
+            .map(connection => this.getPiece(connection.row, connection.col));
+
+        allAdjacentPieces.push(piece);
+
+        adjacentPieces.forEach(adjacentPiece => {
+            if (adjacentPiece && !allAdjacentPieces.includes(adjacentPiece)) {
+                this.getGroupOfAdjacentPieces(adjacentPiece, allAdjacentPieces);
+            }
+        });
+
+        return allAdjacentPieces;
+    }
+
+    public move(vector: Coordinates) {
+        this._position.addVector(vector);
+
+        this._pieces.forEach(piece => {
+            piece.moveByVector(vector);
+            this.calculatePieceTargetPosition(piece);
+        });
+    }
+
+    public zoom(zoom: number) {
+        this.calculateNewRatio(zoom);
+        this.setSize();
+        this.calculatePosition(zoom);
+        this.setDestPieceSize();
+        this.setOffset();
+
+        this._pieces.forEach(piece => {
+            this.zoomPiece(piece, zoom);
+        });
+    }
+
+    private calculateNewRatio(zoom: number) {
+        this._ratio *= zoom;
+    }
+
+    private setSize() {
+        this._size = new TabularSize(
+            this._imageSize.width * this._ratio,
+            this._imageSize.height * this._ratio,
+            this._size.rows, this._size.cols
+        );
+    }
+
+    private calculatePosition(zoom: number) {
+        const vectorX = this._position.x - innerWidth / 2;
+        const vectorXScaled = vectorX * zoom;
+        const positionX = vectorXScaled + innerWidth / 2;
+
+        const vectorY = this._position.y - innerHeight / 2;
+        const vectorYScaled = vectorY * zoom;
+        const positionY = vectorYScaled + innerHeight / 2;
+
+        this._position = new Coordinates(positionX, positionY);
+    }
+
+    private setDestPieceSize() {
+        this._destPieceSize = new Size(
+            this._size.width / this._size.cols,
+            this._size.height / this._size.rows
+        );
+    }
+
+    private setOffset() {
+        this._offset = new Coordinates(
+            this._destPieceSize.width / 4,
+            this._destPieceSize.height / 4
+        );
+    }
+
+    private zoomPiece(piece: Piece, zoom: number) {
+        this.calculatePieceDestPosition(piece, zoom);
+        this.calculatePieceTargetPosition(piece);
+    }
+
+    private calculatePieceDestPosition(piece: Piece, zoom: number) {
+        const vectorX = piece.destPosition.x - innerWidth / 2;
+        const vectorXScaled = vectorX * zoom;
+        const destX = vectorXScaled + innerWidth / 2;
+
+        const vectorY = piece.destPosition.y - innerHeight / 2;
+        const vectorYScaled = vectorY * zoom;
+        const destY = vectorYScaled + innerHeight / 2;
+
+        piece.destPosition = new Coordinates(destX, destY);
+    }
+
+    private calculatePieceTargetPosition(piece: Piece) {
+        const targetX = this._position.x + piece.col * this._destPieceSize.width;
+        const targetY = this._position.y + piece.row * this._destPieceSize.height;
+
+        piece.targetPosition = new Coordinates(targetX, targetY);
     }
 }
