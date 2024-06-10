@@ -1,0 +1,8 @@
+<div @fadeEnterAnimation @fadeLeaveAnimation *ngIf="progressBar">
+    <mat-progress-bar [value]="progressBar.value"></mat-progress-bar>
+
+    <div class="progress">
+        {{progressBar.currentPieces}} z {{progressBar.allPieces}}
+        ({{progressBar.value.toFixed(1)}}%)
+    </div>
+</div>

@@ -116,6 +116,7 @@ $JigsawPuzzles-theme: mat.define-light-theme((color: (primary: $JigsawPuzzles-pr
     --transparent-white: rgba(255, 255, 255, 0.5);
     --very-transparent-white: rgba(255, 255, 255, 0.13);
     --dark-gray: #444444;
+    --dark-grey-transparent: rgba(68, 68, 68, 0.25);
     --gray: #4c4c4c;
     --light-gray: #c2c0c0;
     --medium-gray: #9b9a9a;
@@ -152,7 +153,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(68, 68, 68, 0.25);
+    background: var(--dark-grey-transparent);
 }
 
 ::-webkit-scrollbar-thumb {

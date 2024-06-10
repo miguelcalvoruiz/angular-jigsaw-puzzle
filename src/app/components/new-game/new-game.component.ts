@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GameService } from '../../services/game.service';
-import { GameSettings } from '../../models/gameSettings';
+import { GameSettings } from '../../models/interfaces/gameSettings';
 import { faPuzzlePiece, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { fadeEnterAnimation, fadeLeaveAnimation } from '../../shared/animation';
-import { BoardSettings } from '../../models/boardSettiings';
+import { BoardSettings } from '../../models/interfaces/boardSettiings';
 
 @Component({
   selector: 'app-new-game',
@@ -87,7 +87,9 @@ export class NewGameComponent implements OnInit {
       zoom: 1,
       zoomLevel: 0,
       zoomChange: 0,
+      fullImage: false,
       preview: false,
+      timer: true,
       fullscreen: false
     };
     if (this.gameSettingsForm.valid) {

@@ -1,12 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BoardSettings } from '../../models/boardSettiings';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { BoardSettings } from '../../models/interfaces/boardSettiings';
 import { Subscription } from 'rxjs';
 import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-board-management',
   templateUrl: './board-management.component.html',
-  styleUrl: './board-management.component.scss'
+  styleUrl: './board-management.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class BoardManagementComponent implements OnInit, OnDestroy {
 
@@ -35,8 +36,16 @@ export class BoardManagementComponent implements OnInit, OnDestroy {
     this.gameService.zoomOut();
   }
 
+  toggleFullImage() {
+    this.gameService.toggleFullImage();
+  }
+
   togglePreview() {
     this.gameService.togglePreview();
+  }
+
+  toggleTimer() {
+    this.gameService.toggleTimer();
   }
 
   toggleFullscreen() {

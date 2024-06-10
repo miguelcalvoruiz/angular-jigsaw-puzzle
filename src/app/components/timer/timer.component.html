@@ -1,0 +1,3 @@
+<div @fadeEnterAnimation @fadeLeaveAnimation *ngIf="boardSettings.timer" class="stopwatch">
+    {{stopwatch.hours}}:{{zeroPad(stopwatch.minutes)}}:{{zeroPad(stopwatch.seconds)}}
+</div>

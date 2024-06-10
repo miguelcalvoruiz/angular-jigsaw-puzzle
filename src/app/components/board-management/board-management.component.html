@@ -1,33 +1,40 @@
 <ul class="option-list">
-    <li class="option" class="option" (click)="zoomIn()">
-        <button mat-mini-fab color="primary">
+    <li class="option">
+        <button mat-mini-fab color="primary" (click)="zoomIn()" matTooltip="Acercar" matTooltipPosition="right"
+            matTooltipClass="tooltip">
             <mat-icon>zoom_in</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="zoomOut()">
+        <button mat-mini-fab color="primary" (click)="zoomOut()" matTooltip="Alejar" matTooltipPosition="right"
+            matTooltipClass="tooltip">
             <mat-icon>zoom_out</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary">
-            <mat-icon>image</mat-icon>
+        <button mat-mini-fab color="primary" (click)="toggleFullImage()" matTooltip="Imagen completa"
+            matTooltipPosition="right" matTooltipClass="tooltip">
+            <mat-icon *ngIf="!boardSettings.fullImage">image</mat-icon>
+            <mat-icon *ngIf="boardSettings.fullImage">close</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="togglePreview()">
+        <button mat-mini-fab color="primary" (click)="togglePreview()" matTooltip="Vista previa"
+            matTooltipPosition="right" matTooltipClass="tooltip">
             <mat-icon *ngIf="!boardSettings.preview">visibility</mat-icon>
             <mat-icon *ngIf="boardSettings.preview">visibility_off</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary">
-            <mat-icon>timer</mat-icon>
-            <mat-icon>timer_off</mat-icon>
+        <button mat-mini-fab color="primary" (click)="toggleTimer()" matTooltip="Tiempo" matTooltipPosition="right"
+            matTooltipClass="tooltip">
+            <mat-icon *ngIf="!boardSettings.timer">timer</mat-icon>
+            <mat-icon *ngIf="boardSettings.timer">timer_off</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="toggleFullscreen()">
+        <button mat-mini-fab color="primary" (click)="toggleFullscreen()" matTooltip="Pantalla completa"
+            matTooltipPosition="right" matTooltipClass="tooltip">
             <mat-icon *ngIf="!boardSettings.fullscreen">fullscreen</mat-icon>
             <mat-icon *ngIf="boardSettings.fullscreen">fullscreen_exit</mat-icon>
         </button>

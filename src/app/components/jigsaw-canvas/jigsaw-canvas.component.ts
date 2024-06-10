@@ -1,12 +1,13 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Piece } from '../../models/piece';
-import { Canvas } from '../../models/canvas';
-import { Jigsaw } from '../../models/jigsaw';
-import { Coordinates } from '../../models/coordinates';
-import { GameSettings } from '../../models/gameSettings';
+import { Piece } from '../../models/classes/piece';
+import { Canvas } from '../../models/classes/canvas';
+import { Jigsaw } from '../../models/classes/jigsaw';
+import { Coordinates } from '../../models/classes/coordinates';
+import { GameSettings } from '../../models/interfaces/gameSettings';
 import { GameService } from '../../services/game.service';
 import { Subscription } from 'rxjs';
-import { BoardSettings } from '../../models/boardSettiings';
+import { BoardSettings } from '../../models/interfaces/boardSettiings';
+import { ProgressBar } from '../../models/interfaces/progressBar';
 
 @Component({
   selector: 'app-jigsaw-canvas',
@@ -51,6 +52,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
           }
 
           this.drawJigsaw();
+          this.manageFullImage();
         }
       }
     });
@@ -63,9 +65,9 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.adjustCanvas();
       this.resetCanvasState();
-
       this.prepareJigsaw();
-    }, 500);
+      this.setProgressBar();
+    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -125,22 +127,22 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  manageFullImage() {
+    if (this.boardSettings.fullImage) {
+      this.imageElement.nativeElement.style.display = 'initial';
+    } else {
+      this.imageElement.nativeElement.style.display = 'none';
+    }
+  }
+
   clearCanvas() {
     this.context.clearRect(
       this.canvas.position.x, this.canvas.position.y,
       this.canvas.size.width, this.canvas.size.height
     );
-    const gradient = this.context.createLinearGradient(
-      this.canvas.position.x, this.canvas.position.y, 
-      this.canvas.position.x, this.canvas.position.y + this.canvas.size.height
-    );
-
-    gradient.addColorStop(0, 'rgba(207, 128, 48, 0.5)');
-    gradient.addColorStop(1, 'rgba(26, 28, 39, 0.8)');
-
-    this.context.fillStyle = gradient;
+    this.context.fillStyle = 'rgba(26, 28, 39, 0.9)';
     this.context.fillRect(
-      this.canvas.position.x, this.canvas.position.y, 
+      this.canvas.position.x, this.canvas.position.y,
       this.canvas.size.width, this.canvas.size.height
     );
   }
@@ -175,6 +177,11 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.drawJigsaw();
     this.jigsawInitialized = true;
+  }
+
+  setProgressBar() {
+    const progressBar: ProgressBar = { currentPieces: 0, allPieces: this.jigsaw.pieces.length, value: 0 };
+    this.gameService.setProgressBar(progressBar);
   }
 
   createPiece(row: number, col: number) {
@@ -230,7 +237,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.context.strokeRect(
-      piece.destPosition.x, piece.destPosition.y, 
+      piece.destPosition.x, piece.destPosition.y,
       this.jigsaw.destPieceSize.width, this.jigsaw.destPieceSize.height
     );
   }
@@ -283,6 +290,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.jigsaw.movePieceToBottom(piece);
         piece.setPositionToTarget();
         piece.lock();
+        this.gameService.updateProgressBar();
       });
 
       this.drawJigsaw();

@@ -12,6 +12,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BoardManagementComponent } from './components/board-management/board-management.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TransitionComponent } from './shared/transition/transition.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ProgressComponent } from './components/progress/progress.component';
+import { TimerComponent } from './components/timer/timer.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -19,7 +24,10 @@ import { MatIconModule } from '@angular/material/icon';
     JigsawCanvasComponent,
     GameComponent,
     NewGameComponent,
-    BoardManagementComponent
+    BoardManagementComponent,
+    TransitionComponent,
+    ProgressComponent,
+    TimerComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +36,9 @@ import { MatIconModule } from '@angular/material/icon';
     FontAwesomeModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
