@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { BoardSettings } from '../../models/interfaces/boardSettiings';
 import { ProgressBar } from '../../models/interfaces/progressBar';
 import { Game } from '../../models/classes/game';
+import { GameProgress } from '../../models/interfaces/game-progress';
 
 @Component({
   selector: 'app-jigsaw-canvas',
@@ -53,7 +54,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resetCanvasState();
 
       this.prepareJigsaw();
-      this.setProgressBar();
+      this.setGameProgress();
     }, 1000);
   }
 
@@ -72,8 +73,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const jigsaw = new Jigsaw(
       canvas,
-      this.gameSettings.rows, this.gameSettings.cols, 
-      this.imageElement.nativeElement.width, 
+      this.gameSettings.rows, this.gameSettings.cols,
+      this.imageElement.nativeElement.width,
       this.imageElement.nativeElement.height
     );
 
@@ -112,13 +113,13 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   clearCanvas() {
     this.game.canvas.context.clearRect(
-      this.game.canvas.position.x, this.game.canvas.position.y, 
+      this.game.canvas.position.x, this.game.canvas.position.y,
       this.game.canvas.size.width, this.game.canvas.size.height
     );
 
     this.game.canvas.context.fillStyle = 'rgba(76, 76, 76, 0.9)';
     this.game.canvas.context.fillRect(
-      this.game.canvas.position.x, this.game.canvas.position.y, 
+      this.game.canvas.position.x, this.game.canvas.position.y,
       this.game.canvas.size.width, this.game.canvas.size.height
     );
   }
@@ -126,7 +127,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   displayBoundaries() {
     this.game.canvas.context.beginPath();
     this.game.canvas.context.rect(
-      this.game.jigsaw.position.x, this.game.jigsaw.position.y, 
+      this.game.jigsaw.position.x, this.game.jigsaw.position.y,
       this.game.jigsaw.size.width, this.game.jigsaw.size.height
     );
     this.game.canvas.context.stroke();
@@ -137,8 +138,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.game.canvas.context.save();
     this.game.canvas.context.globalAlpha = 0.4;
     this.game.canvas.context.drawImage(
-      this.imageElement.nativeElement, 
-      this.game.jigsaw.position.x, this.game.jigsaw.position.y, 
+      this.imageElement.nativeElement,
+      this.game.jigsaw.position.x, this.game.jigsaw.position.y,
       this.game.jigsaw.size.width, this.game.jigsaw.size.height
     );
     this.game.canvas.context.restore();
@@ -150,26 +151,28 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.game.start();
   }
 
-  setProgressBar() {
-    const progressBar: ProgressBar = { 
-      currentPieces: 0, 
-      allPieces: this.game.jigsaw.pieces.length, 
-      value: 0 
+  setGameProgress() {
+    const progressBar: ProgressBar = {
+      currentPieces: 0,
+      allPieces: this.game.jigsaw.pieces.length,
+      value: 0
     };
-    this.gameService.setProgressBar(progressBar);
+    const gameProgress: GameProgress = { progressBar, time: null };
+
+    this.gameService.setGameProgress(gameProgress);
   }
 
   drawPiece(piece: Piece) {
     this.game.canvas.context.drawImage(
-      this.imageElement.nativeElement, 
-      piece.sourcePosition.x, piece.sourcePosition.y, 
+      this.imageElement.nativeElement,
+      piece.sourcePosition.x, piece.sourcePosition.y,
       this.game.jigsaw.sourcePieceSize.width, this.game.jigsaw.sourcePieceSize.height,
-      piece.destPosition.x, piece.destPosition.y, 
+      piece.destPosition.x, piece.destPosition.y,
       this.game.jigsaw.destPieceSize.width, this.game.jigsaw.destPieceSize.height
     );
 
     this.game.canvas.context.strokeRect(
-      piece.destPosition.x, piece.destPosition.y, 
+      piece.destPosition.x, piece.destPosition.y,
       this.game.jigsaw.destPieceSize.width, this.game.jigsaw.destPieceSize.height
     );
   }
@@ -200,25 +203,25 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.game.activePiece) {
       const adjacentPieces = this.game.jigsaw.getGroupOfAdjacentPieces(this.game.activePiece)
       const vector = this.calculateActivePieceVector(event);
-  
+
       this.game.activePiece.destPosition = this.calculateActivePiecePosition(event);
-  
+
       adjacentPieces.forEach(piece => {
         this.game.jigsaw.movePieceToTop(piece);
-  
+
         if (piece != this.game.activePiece) {
           piece.moveByVector(vector);
         }
       });
-  
+
     } else if (this.game.canvasDragging) {
       const vector = new Coordinates(
-        event.clientX - this.game.canvasDragging.x, 
+        event.clientX - this.game.canvasDragging.x,
         event.clientY - this.game.canvasDragging.y
       );
-  
+
       this.game.jigsaw.move(vector);
-  
+
       this.game.canvasDragging = new Coordinates(event.clientX, event.clientY);
     }
 
@@ -250,7 +253,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.game.activePiece = null;
-      this.drawJigsaw(); 
+      this.drawJigsaw();
     } else if (this.game.canvasDragging) {
       this.game.canvasDragging = null;
     }
@@ -268,7 +271,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   isMouseOverPiece(piece: Piece, event: MouseEvent) {
     const position = this.getMousePosition(event);
 
-    if (position.x >= piece.destPosition.x && position.x <= piece.destPosition.x + this.game.jigsaw.destPieceSize.width 
+    if (position.x >= piece.destPosition.x && position.x <= piece.destPosition.x + this.game.jigsaw.destPieceSize.width
       && position.y >= piece.destPosition.y && position.y <= piece.destPosition.y + this.game.jigsaw.destPieceSize.height) {
       return true;
     } else {
@@ -279,9 +282,9 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
   isMouseOverTargetPosition(piece: Piece, event: MouseEvent) {
     const position = this.getMousePosition(event);
 
-    if (position.x >= piece.targetPosition.x + this.game.jigsaw.offset.x 
+    if (position.x >= piece.targetPosition.x + this.game.jigsaw.offset.x
       && position.x <= piece.targetPosition.x + this.game.jigsaw.destPieceSize.width - this.game.jigsaw.offset.x
-      && position.y >= piece.targetPosition.y + this.game.jigsaw.offset.x 
+      && position.y >= piece.targetPosition.y + this.game.jigsaw.offset.x
       && position.y <= piece.targetPosition.y + this.game.jigsaw.destPieceSize.height - this.game.jigsaw.offset.y) {
       return true;
     } else {
@@ -293,8 +296,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const position = this.getMousePosition(event);
 
     return new Coordinates(
-      position.x - this.game.jigsaw.destPieceSize.width / 2, 
-      position.y- this.game.jigsaw.destPieceSize.height / 2
+      position.x - this.game.jigsaw.destPieceSize.width / 2,
+      position.y - this.game.jigsaw.destPieceSize.height / 2
     );
   }
 

@@ -14,8 +14,10 @@ import { GameService } from '../../services/game.service';
 export class TimerComponent implements OnInit, OnDestroy {
   boardSettings!: BoardSettings;
   boardSettingsSubscription!: Subscription;
+  gameProgressSubscription!: Subscription;
 
   stopwatch: Stopwatch = { seconds: 0, minutes: 0, hours: 0 };
+  stopwatchInterval: any;
 
   constructor(private gameService: GameService) { }
 
@@ -26,15 +28,22 @@ export class TimerComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.gameProgressSubscription = this.gameService.gameProgress$.subscribe(progress => {
+      if (progress && progress.progressBar.value == 100) {
+        this.stopStopwatch();
+      }
+    });
+
     this.startStopwatch();
   }
 
   ngOnDestroy(): void {
     this.boardSettingsSubscription.unsubscribe();
+    this.gameProgressSubscription.unsubscribe();
   }
 
   startStopwatch() {
-    setInterval(() => {
+    this.stopwatchInterval = setInterval(() => {
       this.stopwatch.seconds++;
 
       if (this.stopwatch.seconds == 60) {
@@ -47,6 +56,12 @@ export class TimerComponent implements OnInit, OnDestroy {
         this.stopwatch.hours++;
       }
     }, 1000);
+  }
+
+  stopStopwatch() {
+    clearInterval(this.stopwatchInterval);
+
+    this.gameService.recordTime(this.stopwatch);
   }
 
   zeroPad(number: number) {

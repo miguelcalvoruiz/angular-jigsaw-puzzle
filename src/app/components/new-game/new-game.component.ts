@@ -24,6 +24,10 @@ export class NewGameComponent implements OnInit {
 
   sizing = [
     { pieces: 24, rows: 4, cols: 6 },
+    { pieces: 3, rows: 1, cols: 3 },
+    { pieces: 8, rows: 2, cols: 4 },
+    { pieces: 15, rows: 3, cols: 5 },
+    { pieces: 24, rows: 4, cols: 6 },
     { pieces: 35, rows: 5, cols: 7 },
     { pieces: 54, rows: 6, cols: 9 },
     { pieces: 77, rows: 7, cols: 11 },

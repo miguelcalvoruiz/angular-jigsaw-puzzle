@@ -17,6 +17,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ProgressComponent } from './components/progress/progress.component';
 import { TimerComponent } from './components/timer/timer.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SummaryComponent } from './components/summary/summary.component';
+import { NgFireworksModule } from '@fireworks-js/angular';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     BoardManagementComponent,
     TransitionComponent,
     ProgressComponent,
-    TimerComponent
+    TimerComponent,
+    SummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    NgFireworksModule
   ],
   providers: [],
   bootstrap: [AppComponent]

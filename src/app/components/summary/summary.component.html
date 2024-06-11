@@ -1,0 +1,25 @@
+<div @fadeEnterAnimation class="summary-container">
+    <div class="congratulations">
+        Felicidades!
+    </div>
+
+    <div>
+        Resolviste
+        <span class="highlight">
+            {{gameProgress.progressBar.allPieces}}
+        </span>
+        puzzle
+    </div>
+
+    <div>
+        en el tiempo
+        <span class="highlight">
+            {{gameProgress.time!.hours}}:{{zeroPad(gameProgress.time!.minutes)}}:{{zeroPad(gameProgress.time!.seconds)}}
+        </span>
+    </div>
+
+    <button type="button" routerLink="/new-game" class="new-game" matTooltip="Jugar de nuevo" matTooltipPosition="above"
+        matTooltipClass="tooltip">
+        <fa-icon [icon]="faPuzzlePiece"></fa-icon>
+    </button>
+</div>

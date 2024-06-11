@@ -1,0 +1,49 @@
+.summary-container {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--highlight-green);
+    background-color: var(--dark-gray);
+    padding: 50px;
+}
+
+.congratulations {
+    font-size: 2rem;
+    letter-spacing: 1px;
+    filter: drop-shadow(0 0 0.07rem var(--highlight-green));
+    margin-bottom: 25px;
+}
+
+.highlight {
+    font-weight: bolder;
+}
+
+.new-game {
+    font-size: 5rem;
+    color: var(--highlight-green);
+    background: transparent;
+    border: none;
+    margin-top: 50px;
+    animation: glowing 2s infinite;
+    transition: all 1s;
+
+    &:hover {
+        cursor: pointer;
+        transform: rotateZ(180deg);
+    }
+}
+
+@keyframes glowing {
+    0% {
+        filter: drop-shadow(0 0 0.25rem var(--highlight-green));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 0.4rem var(--highlight-green));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 0.25rem var(--highlight-green));
+    }
+}

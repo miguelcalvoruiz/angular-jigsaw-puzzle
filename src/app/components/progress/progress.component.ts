@@ -17,9 +17,9 @@ export class ProgressComponent implements OnInit, OnDestroy {
   constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
-    this.progressBarSubscription = this.gameService.progressBar$.subscribe(progressBar => {
-      if (progressBar) {
-        this.progressBar = progressBar;
+    this.progressBarSubscription = this.gameService.gameProgress$.subscribe(progress => {
+      if (progress) {
+        this.progressBar = progress.progressBar;
       }
     });
   }
