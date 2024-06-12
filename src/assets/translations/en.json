@@ -3,6 +3,7 @@
     "label.new.game.second": "Choose the number of puzzle pieces.",
     "label.new.game.third": "Play",
     "label.new.game.tooltip.play": "Play",
+    "label.new.game.resolution.not.available": "The game is not available on devices with a resolution lower than 720px",
     "label.board.tooltip.zoom.in": "Zoom In",
     "label.board.tooltip.zoom.out": "Zoom Out",
     "label.board.tooltip.full.image": "View Solution",

@@ -3,6 +3,7 @@
     "label.new.game.second": "Elige el número de piezas del rompecabezas.",
     "label.new.game.third": "Jugar",
     "label.new.game.tooltip.play": "Jugar",
+    "label.new.game.resolution.not.available": "El juego no está disponible en dispositivos con una resolución inferior a 720 px.",
     "label.board.tooltip.zoom.in": "Acercar",
     "label.board.tooltip.zoom.out": "Alejar",
     "label.board.tooltip.full.image": "Ver solución",

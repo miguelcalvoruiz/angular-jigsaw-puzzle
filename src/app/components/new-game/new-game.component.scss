@@ -6,6 +6,7 @@
     background: linear-gradient(rgba(68, 68, 68, 0.7) 50%, rgba(123, 251, 146, 0.5)), url("../../../assets/img/background.jpg");
     background-position: top;
     animation: background-position 50s infinite;
+    flex-direction: column;
 }
 
 .brand {
@@ -13,127 +14,166 @@
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     color: var(--dark-gray);
-    writing-mode: vertical-lr;
-    text-orientation: upright;
     animation: glowing 2s infinite;
-    margin-right: 150px;
-}  
+}
+
+.mobile-info {
+    font-size: 0.9rem;
+    margin-top: 25px;
+}
+
 
 .new-game-form {
-    width: 800px;
-    align-items: center;
-    background-color: var(--dark-gray);
-    padding: 50px;
-    border-radius: 15px;
+    display: none;
 }
 
-.form-control-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 25px 0;
+@media screen and (min-width: 720px) {
+    .brand {
+        margin-bottom: 25px;
+    }
 
-    .step {
+    .mobile-info {
+        display: none;
+    }
+
+    .new-game-form {
+        display: initial;
+        width: 700px;
+        background-color: var(--dark-gray);
+        padding: 50px;
+        border-radius: 15px;
+    }
+
+    .form-control-wrapper {
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        margin: 25px 0;
+
+        .step {
+            display: flex;
+            align-items: center;
+            width: 50%;
+            color: var(--highlight-green);
+
+            .number {
+                display: inline-block;
+                width: 68px;
+                text-align: center;
+                background-color: var(--dark-gray);
+                font-size: 3rem;
+                font-weight: bold;
+                border: 1px solid var(--highlight-green);
+                border-radius: 20%;
+                filter: drop-shadow(0 0 0.1rem var(--highlight-green));
+            }
+
+            .text {
+                font-size: 1.5rem;
+                margin-left: 25px;
+            }
+        }
+
+        input[type=file],
+        input[type=radio] {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+
+    .file-input {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        font-size: 5rem;
+        color: var(--dark-gray);
+        background-image: linear-gradient(to bottom, var(--highlight-green) 50%, var(--dark-gray) 50%);
+        background-size: 100% 200%;
+        border-radius: 25px;
+        padding: 25px;
+        transition: all 1s;
+
+        &:hover {
+            color: var(--highlight-green);
+            background-position: 0 -100%;
+        }
+    }
+
+    .file-name {
+        font-size: 0.7rem;
+    }
+
+    .radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
         width: 50%;
-        color: var(--highlight-green);
+    }
 
-        .number {
-            display: inline-block;
-            width: 55px;
-            text-align: center;
-            background-color: var(--dark-gray);
-            font-size: 3rem;
-            font-weight: bold;
-            border: 1px solid var(--highlight-green);
-            border-radius: 20%;
-            filter: drop-shadow(0 0 0.1rem var(--highlight-green));
-        }
+    .radio-button {
+        position: relative;
+        text-align: center;
+        width: 20%;
+        font-size: 1.5rem;
+        color: var(--dark-gray);
+        background-image: linear-gradient(to bottom, var(--highlight-green) 50%, var(--dark-gray) 50%);
+        background-size: 100% 200%;
+        border-radius: 10px;
+        padding: 5px;
+        transition: all 1s;
 
-        .text {
-            font-size: 1.5rem;
-            margin-left: 25px;
+        &:hover {
+            color: var(--highlight-green);
+            background-position: 0 -100%;
         }
     }
 
-    input[type=file],
-    input[type=radio] {
-        height: 100%;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        cursor: pointer;
-    }
-}
-
-.file-input {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    font-size: 5rem;
-    color: var(--dark-gray);
-    background-image: linear-gradient(to bottom, var(--highlight-green) 50%, var(--dark-gray) 50%);
-    background-size: 100% 200%;
-    border-radius: 25px;
-    padding: 25px;
-    transition: all 1s;
-
-    &:hover {
+    .selected {
         color: var(--highlight-green);
         background-position: 0 -100%;
     }
-}
 
-.file-name {
-    font-size: 0.7rem;
-}
-
-.radio-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 10px;
-    width: 50%;
-}
-
-.radio-button {
-    position: relative;
-    text-align: center;
-    width: 20%;
-    font-size: 1.5rem;
-    color: var(--dark-gray);
-    background-image: linear-gradient(to bottom, var(--highlight-green) 50%, var(--dark-gray) 50%);
-    background-size: 100% 200%;
-    border-radius: 10px;
-    padding: 10px;
-    transition: all 1s;
-
-    &:hover {
+    .start {
+        font-size: 7rem;
         color: var(--highlight-green);
-        background-position: 0 -100%;
+        transition: all 1s;
+        background: transparent;
+        border: none;
+        animation: glowing 2s infinite;
+
+        &:hover {
+            cursor: pointer;
+            transform: rotateZ(180deg);
+        }
     }
 }
 
-.selected {
-    color: var(--highlight-green);
-    background-position: 0 -100%;
-}
+@media screen and (min-width: 1200px) {
+    .new-game-container {
+        flex-direction: row;
+    }
 
-.start {
-    font-size: 7rem;
-    color: var(--highlight-green);
-    transition: all 1s;
-    background: transparent;
-    border: none;
-    animation: glowing 2s infinite;
+    .brand {
+        writing-mode: vertical-lr;
+        text-orientation: upright;
+        margin-right: 150px;
+        margin-bottom: 0;
+    }
 
-    &:hover {
-        cursor: pointer;
-        transform: rotateZ(180deg);
+    .new-game-form {
+        display: initial;
+        width: 800px;
+    }
+
+    .radio-button {
+        padding: 10px;
     }
 }
 

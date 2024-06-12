@@ -4,6 +4,10 @@
         PuzzleTS
     </div>
 
+    <div class="mobile-info">
+        {{ 'label.new.game.resolution.not.available' | translate }}
+    </div>
+
     <form [formGroup]="gameSettingsForm" (ngSubmit)="startGame()" class="new-game-form">
         <div @fadeEnterAnimation class="form-control-wrapper">
             <label class="step">
