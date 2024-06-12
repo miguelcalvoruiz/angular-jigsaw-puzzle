@@ -1,4 +1,9 @@
 <div class="new-game-container">
+
+    <div class="brand">
+        PuzzleTS
+    </div>
+
     <form [formGroup]="gameSettingsForm" (ngSubmit)="startGame()" class="new-game-form">
         <div @fadeEnterAnimation class="form-control-wrapper">
             <label class="step">
@@ -39,7 +44,8 @@
                 <span class="number">3</span>
                 <span class="text">{{'label.new.game.third' | translate}}</span>
             </label>
-            <button type="submit" class="start" [matTooltip]="tooltipPlayText" matTooltipPosition="below" matTooltipClass="tooltip">
+            <button type="submit" class="start" [matTooltip]="tooltipPlayText" matTooltipPosition="below"
+                matTooltipClass="tooltip">
                 <fa-icon [icon]="faPuzzlePiece"></fa-icon>
             </button>
         </div>

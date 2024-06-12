@@ -3,16 +3,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(rgba(68, 68, 68, 0.7) 50%, rgba(123, 251, 146, 0.5)), url("../../../assets/background.jpg");
+    background: linear-gradient(rgba(68, 68, 68, 0.7) 50%, rgba(123, 251, 146, 0.5)), url("../../../assets/img/background.jpg");
     background-position: top;
     animation: background-position 50s infinite;
 }
+
+.brand {
+    font-size: 4rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: var(--dark-gray);
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    animation: glowing 2s infinite;
+    margin-right: 150px;
+}  
 
 .new-game-form {
     width: 800px;
     align-items: center;
     background-color: var(--dark-gray);
     padding: 50px;
+    border-radius: 15px;
 }
 
 .form-control-wrapper {
@@ -29,13 +41,13 @@
 
         .number {
             display: inline-block;
-            width: 60px;
+            width: 55px;
             text-align: center;
             background-color: var(--dark-gray);
             font-size: 3rem;
             font-weight: bold;
             border: 1px solid var(--highlight-green);
-            border-radius: 50%;
+            border-radius: 20%;
             filter: drop-shadow(0 0 0.1rem var(--highlight-green));
         }
 
