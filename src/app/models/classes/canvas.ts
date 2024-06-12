@@ -23,4 +23,8 @@ export class Canvas {
     public get context() {
         return this._context;
     }
+
+    public resetSize() {
+        this._size = new Size(innerWidth - 60, innerHeight);
+    }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameSettings } from '../../models/interfaces/gameSettings';
-import { GameService } from '../../services/game.service';
+import { GameService } from '../../services/game/game.service';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
 

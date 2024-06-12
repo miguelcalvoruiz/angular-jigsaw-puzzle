@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { fadeEnterAnimation, fadeLeaveAnimation } from '../../shared/animation';
-import { GameService } from '../../services/game.service';
+import { GameService } from '../../services/game/game.service';
 import { Subscription } from 'rxjs';
 import { ProgressBar } from '../../models/interfaces/progressBar';
 

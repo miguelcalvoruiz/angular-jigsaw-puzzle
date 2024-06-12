@@ -110,23 +110,8 @@ $JigsawPuzzles-theme: mat.define-light-theme((color: (primary: $JigsawPuzzles-pr
 
 :root {
     --highlight-green: #7bfb92;
-    --purple: #c15df3;
-    --white: #f3f3f3;
-    --soft-black: rgba(0, 0, 0, 0.05);
-    --transparent-white: rgba(255, 255, 255, 0.5);
-    --very-transparent-white: rgba(255, 255, 255, 0.13);
     --dark-gray: #444444;
-    --dark-grey-transparent: rgba(68, 68, 68, 0.25);
-    --gray: #4c4c4c;
-    --light-gray: #c2c0c0;
-    --medium-gray: #9b9a9a;
-    --light-gray-hover: #aaa;
-    --black: black;
-    --nav-background: #232323;
-    --home-background: rgba(177, 176, 176, 0.102);
-    --body-background: #313131;
-    --green-purple-gradient: linear-gradient(to right, #7bfb92, #c15df3);
-    --green-purple-gradient-webkit: -webkit-linear-gradient(to right, #7bfb92, #c15df3);
+    --dark-gray-transparent: rgba(68, 68, 68, 0.25);
 }
 
 *,
@@ -153,7 +138,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--dark-grey-transparent);
+    background: var(--dark-gray-transparent);
 }
 
 ::-webkit-scrollbar-thumb {

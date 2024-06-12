@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { GameSettings } from '../models/interfaces/gameSettings';
+import { GameSettings } from '../../models/interfaces/gameSettings';
 import { BehaviorSubject, take } from 'rxjs';
-import { BoardSettings } from '../models/interfaces/boardSettiings';
-import { ProgressBar } from '../models/interfaces/progressBar';
-import { GameProgress } from '../models/interfaces/game-progress';
-import { Stopwatch } from '../models/interfaces/stopWatch';
+import { BoardSettings } from '../../models/interfaces/boardSettiings';
+import { ProgressBar } from '../../models/interfaces/progressBar';
+import { GameProgress } from '../../models/interfaces/game-progress';
+import { Stopwatch } from '../../models/interfaces/stopWatch';
 
 @Injectable({
   providedIn: 'root'

@@ -1,39 +1,39 @@
 <ul class="option-list">
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="zoomIn()" matTooltip="Acercar" matTooltipPosition="right"
+        <button mat-mini-fab color="primary" (click)="zoomIn()" [matTooltip]="getTranslation('label.board.tooltip.zoom.in')" matTooltipPosition="right"
             matTooltipClass="tooltip">
             <mat-icon>zoom_in</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="zoomOut()" matTooltip="Alejar" matTooltipPosition="right"
+        <button mat-mini-fab color="primary" (click)="zoomOut()" [matTooltip]="getTranslation('label.board.tooltip.zoom.out')" matTooltipPosition="right"
             matTooltipClass="tooltip">
             <mat-icon>zoom_out</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="toggleFullImage()" matTooltip="Imagen completa"
+        <button mat-mini-fab color="primary" (click)="toggleFullImage()" [matTooltip]="getTranslation('label.board.tooltip.full.image')"
             matTooltipPosition="right" matTooltipClass="tooltip">
             <mat-icon *ngIf="!boardSettings.fullImage">image</mat-icon>
             <mat-icon *ngIf="boardSettings.fullImage">close</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="togglePreview()" matTooltip="Vista previa"
+        <button mat-mini-fab color="primary" (click)="togglePreview()" [matTooltip]="getTranslation('label.board.tooltip.preview')"
             matTooltipPosition="right" matTooltipClass="tooltip">
             <mat-icon *ngIf="!boardSettings.preview">visibility</mat-icon>
             <mat-icon *ngIf="boardSettings.preview">visibility_off</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="toggleTimer()" matTooltip="Tiempo" matTooltipPosition="right"
+        <button mat-mini-fab color="primary" (click)="toggleTimer()" [matTooltip]="getTranslation('label.board.tooltip.timer')" matTooltipPosition="right"
             matTooltipClass="tooltip">
             <mat-icon *ngIf="!boardSettings.timer">timer</mat-icon>
             <mat-icon *ngIf="boardSettings.timer">timer_off</mat-icon>
         </button>
     </li>
     <li class="option">
-        <button mat-mini-fab color="primary" (click)="toggleFullscreen()" matTooltip="Pantalla completa"
+        <button mat-mini-fab color="primary" (click)="toggleFullscreen()" [matTooltip]="getTranslation('label.board.tooltip.fullscreen')"
             matTooltipPosition="right" matTooltipClass="tooltip">
             <mat-icon *ngIf="!boardSettings.fullscreen">fullscreen</mat-icon>
             <mat-icon *ngIf="boardSettings.fullscreen">fullscreen_exit</mat-icon>

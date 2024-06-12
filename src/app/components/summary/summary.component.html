@@ -1,24 +1,24 @@
 <div @fadeEnterAnimation class="summary-container">
     <div class="congratulations">
-        Felicidades!
+        {{ "label.summary.congratulations" | translate }}
     </div>
 
     <div>
-        Resolviste
+        {{ "label.summary.completed" | translate }}
         <span class="highlight">
             {{gameProgress.progressBar.allPieces}}
         </span>
-        puzzle
+        {{ "label.summary.pieces" | translate }}
     </div>
 
     <div>
-        en el tiempo
+        {{ "label.summary.time" | translate }}
         <span class="highlight">
             {{gameProgress.time!.hours}}:{{zeroPad(gameProgress.time!.minutes)}}:{{zeroPad(gameProgress.time!.seconds)}}
         </span>
     </div>
 
-    <button type="button" routerLink="/new-game" class="new-game" matTooltip="Jugar de nuevo" matTooltipPosition="above"
+    <button type="button" routerLink="/new-game" class="new-game" [matTooltip]="tooltipPlayAgainText" matTooltipPosition="above"
         matTooltipClass="tooltip">
         <fa-icon [icon]="faPuzzlePiece"></fa-icon>
     </button>

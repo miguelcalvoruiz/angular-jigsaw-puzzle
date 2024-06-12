@@ -3,7 +3,7 @@ import { fadeEnterAnimation, fadeLeaveAnimation } from '../../shared/animation';
 import { BoardSettings } from '../../models/interfaces/boardSettiings';
 import { Subscription } from 'rxjs';
 import { Stopwatch } from '../../models/interfaces/stopWatch';
-import { GameService } from '../../services/game.service';
+import { GameService } from '../../services/game/game.service';
 
 @Component({
   selector: 'app-timer',

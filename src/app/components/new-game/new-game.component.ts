@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { GameService } from '../../services/game.service';
+import { GameService } from '../../services/game/game.service';
 import { GameSettings } from '../../models/interfaces/gameSettings';
 import { faPuzzlePiece, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { fadeEnterAnimation, fadeLeaveAnimation } from '../../shared/animation';
 import { BoardSettings } from '../../models/interfaces/boardSettiings';
+import { TranslateService } from '../../services/translate/translate.service';
 
 @Component({
   selector: 'app-new-game',
@@ -39,11 +40,17 @@ export class NewGameComponent implements OnInit {
 
   faUpload = faUpload;
   faPuzzlePiece = faPuzzlePiece;
+  tooltipPlayText: string = '';
 
-  constructor(private gameService: GameService, private fb: FormBuilder, private router: Router) { }
+  constructor(private gameService: GameService,
+    private fb: FormBuilder,
+    private router: Router,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
-
+    this.translateService.getData().then(() => {
+      this.tooltipPlayText = this.translateService.getTranslate('label.new.game.tooltip.play');
+    });
   }
 
   onFileSelected(event: any) {

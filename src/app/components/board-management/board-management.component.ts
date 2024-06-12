@@ -1,7 +1,9 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { TranslateService } from './../../services/translate/translate.service';
+import { Component, HostListener, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { BoardSettings } from '../../models/interfaces/boardSettiings';
 import { Subscription } from 'rxjs';
-import { GameService } from '../../services/game.service';
+import { GameService } from '../../services/game/game.service';
+import { GameProgress } from '../../models/interfaces/game-progress';
 
 @Component({
   selector: 'app-board-management',
@@ -14,7 +16,10 @@ export class BoardManagementComponent implements OnInit, OnDestroy {
   boardSettings!: BoardSettings;
   boardSettingsSubscription!: Subscription;
 
-  constructor(private gameService: GameService) { }
+  gameProgress!: GameProgress;
+  gameProgressSubscription!: Subscription;
+
+  constructor(private gameService: GameService, private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.boardSettingsSubscription = this.gameService.boardSettings$.subscribe(boardSettings => {
@@ -22,10 +27,23 @@ export class BoardManagementComponent implements OnInit, OnDestroy {
         this.boardSettings = boardSettings;
       }
     });
+    this.gameProgressSubscription = this.gameService.gameProgress$.subscribe(gameProgress => {
+      if (gameProgress) {
+        this.gameProgress = gameProgress;
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.boardSettingsSubscription.unsubscribe();
+    this.gameProgressSubscription.unsubscribe();
+  }
+
+  @HostListener('window:wheel', ['$event'])
+  onWheel(event: WheelEvent) {
+    if (this.gameProgress.progressBar.value != 100) {
+      event.deltaY < 0 ? this.gameService.zoomIn() : this.gameService.zoomOut();
+    }
   }
 
   zoomIn() {
@@ -50,5 +68,18 @@ export class BoardManagementComponent implements OnInit, OnDestroy {
 
   toggleFullscreen() {
     this.gameService.toggleFullscreen();
+    this.manageFullscreen();
+  }
+
+  manageFullscreen() {
+    if (this.boardSettings.fullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  }
+
+  getTranslation(key: string): string {
+    return this.translateService.getTranslate(key);
   }
 }

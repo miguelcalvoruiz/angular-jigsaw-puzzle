@@ -1,0 +1,17 @@
+{
+    "label.new.game.first": "Upload your image",
+    "label.new.game.second": "Choose the number of puzzle pieces.",
+    "label.new.game.third": "Play",
+    "label.new.game.tooltip.play": "Play",
+    "label.board.tooltip.zoom.in": "Zoom In",
+    "label.board.tooltip.zoom.out": "Zoom Out",
+    "label.board.tooltip.full.image": "View Solution",
+    "label.board.tooltip.preview": "Preview",
+    "label.board.tooltip.timer": "Timer",
+    "label.board.tooltip.fullscreen": "Fullscreen",
+    "label.summary.congratulations": "Congratulations!",
+    "label.summary.completed": "You completed the ",
+    "label.summary.pieces": " pieces",
+    "label.summary.time": "in a time of ",
+    "label.summary.tooltip.play.again": "Play again"
+}

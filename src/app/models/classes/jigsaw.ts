@@ -154,7 +154,7 @@ export class Jigsaw {
     }
 
     public zoom(zoom: number) {
-        this.calculateNewRatio(zoom);
+        this.calculateRatio(zoom);
         this.setSize();
         this.calculatePosition(zoom);
         this.setDestPieceSize();
@@ -165,8 +165,18 @@ export class Jigsaw {
         });
     }
 
-    private calculateNewRatio(zoom: number) {
+    public defaultSizeAndPosition() {
+        this.calculateDefaultRatio();
+        this.setSize();
+        this.centerPosition();
+    }
+
+    private calculateRatio(zoom: number) {
         this._ratio *= zoom;
+    }
+
+    private calculateDefaultRatio() {
+        this._ratio = 0.6 * Math.min(this._canvas.size.width / this._imageSize.width, this._canvas.size.height / this._imageSize.height);
     }
 
     private setSize() {
@@ -187,6 +197,13 @@ export class Jigsaw {
         const positionY = vectorYScaled + innerHeight / 2;
 
         this._position = new Coordinates(positionX, positionY);
+    }
+
+    private centerPosition() {
+        this._position = new Coordinates(
+            (this._canvas.size.width - this._size.width) / 2,
+            (this._canvas.size.height - this._size.height) / 2
+        );
     }
 
     private setDestPieceSize() {

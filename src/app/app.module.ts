@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -19,6 +19,13 @@ import { TimerComponent } from './components/timer/timer.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SummaryComponent } from './components/summary/summary.component';
 import { NgFireworksModule } from '@fireworks-js/angular';
+import { TranslatePipe } from './pipes/translate.pipe';
+import { TranslateService } from './services/translate/translate.service';
+import { HttpClientModule } from '@angular/common/http';
+
+export function translateFactory(provider: TranslateService) {
+  return () => provider.getData();
+}
 
 @NgModule({
   declarations: [
@@ -30,7 +37,8 @@ import { NgFireworksModule } from '@fireworks-js/angular';
     TransitionComponent,
     ProgressComponent,
     TimerComponent,
-    SummaryComponent
+    SummaryComponent,
+    TranslatePipe
   ],
   imports: [
     BrowserModule,
@@ -42,9 +50,16 @@ import { NgFireworksModule } from '@fireworks-js/angular';
     MatIconModule,
     MatTooltipModule,
     MatProgressBarModule,
-    NgFireworksModule
+    NgFireworksModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [TranslateService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: translateFactory,
+      deps: [TranslateService],
+      multi: true
+    },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

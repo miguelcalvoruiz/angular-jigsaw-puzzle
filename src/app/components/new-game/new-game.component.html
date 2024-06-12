@@ -3,7 +3,7 @@
         <div @fadeEnterAnimation class="form-control-wrapper">
             <label class="step">
                 <span class="number">1</span>
-                <span class="text">Sube tu imagen</span>
+                <span class="text">{{'label.new.game.first' | translate}}</span>
             </label>
             <div class="file-input" [ngClass]="{selected: gameSettingsForm.controls['image'].value}">
                 <fa-icon [icon]="faUpload"></fa-icon>
@@ -22,7 +22,7 @@
         <div @fadeEnterAnimation *ngIf="gameSettingsForm.controls['image'].value" class="form-control-wrapper">
             <label class="step">
                 <span class="number">2</span>
-                <span class="text">Elige el número de piezas del rompecabezas.</span>
+                <span class="text">{{'label.new.game.second' | translate}}</span>
             </label>
             <div class="radio-group">
                 <div *ngFor="let option of sizing; let i = index" class="radio-button"
@@ -37,9 +37,9 @@
         <div @fadeEnterAnimation @fadeLeaveAnimation *ngIf="gameSettingsForm.valid" class="form-control-wrapper">
             <label class="step">
                 <span class="number">3</span>
-                <span class="text">Jugar</span>
+                <span class="text">{{'label.new.game.third' | translate}}</span>
             </label>
-            <button type="submit" class="start" matTooltip="Jugar" matTooltipPosition="below" matTooltipClass="tooltip">
+            <button type="submit" class="start" [matTooltip]="tooltipPlayText" matTooltipPosition="below" matTooltipClass="tooltip">
                 <fa-icon [icon]="faPuzzlePiece"></fa-icon>
             </button>
         </div>
