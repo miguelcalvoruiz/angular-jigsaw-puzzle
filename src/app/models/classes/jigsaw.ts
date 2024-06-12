@@ -144,6 +144,19 @@ export class Jigsaw {
         return allAdjacentPieces;
     }
 
+    public findConnectionsBetweenPieces(adjacentPieces: Piece[]) {
+        let connector: Piece | null = null;
+
+        adjacentPieces.forEach(piece => {
+            let result = piece.connect();
+            if (!connector && result) {
+                connector = result;
+            }
+        });
+
+        return connector;
+    }
+
     public move(vector: Coordinates) {
         this._position.addVector(vector);
 

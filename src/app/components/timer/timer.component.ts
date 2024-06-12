@@ -39,7 +39,9 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.boardSettingsSubscription.unsubscribe();
-    this.gameProgressSubscription.unsubscribe();
+    if (!this.gameProgressSubscription.closed) {
+      this.gameProgressSubscription.unsubscribe();
+    }
   }
 
   startStopwatch() {
@@ -60,7 +62,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   stopStopwatch() {
     clearInterval(this.stopwatchInterval);
-
+    this.gameProgressSubscription.unsubscribe();
     this.gameService.recordTime(this.stopwatch);
   }
 

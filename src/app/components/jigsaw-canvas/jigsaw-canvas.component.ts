@@ -259,7 +259,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
           this.gameService.updateProgressBar();
         });
       } else {
-        const connector = this.findConnectionsBetweenPieces(adjacentPieces);
+        const connector = this.game.jigsaw.findConnectionsBetweenPieces(adjacentPieces);
 
         if (connector) {
           this.game.jigsaw.movePieceToTop(connector);
@@ -333,18 +333,5 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       position.x - this.game.jigsaw.destPieceSize.width / 2 - this.game.activePiece!.destPosition.x,
       position.y - this.game.jigsaw.destPieceSize.height / 2 - this.game.activePiece!.destPosition.y
     );
-  }
-
-  findConnectionsBetweenPieces(adjacentPieces: Piece[]) {
-    let connector: Piece | null = null;
-
-    adjacentPieces.forEach(piece => {
-      let result = piece.connect();
-      if (!connector && result) {
-        connector = result;
-      }
-    });
-
-    return connector;
   }
 }
