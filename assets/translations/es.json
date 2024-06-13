@@ -1,0 +1,18 @@
+{
+    "label.new.game.first": "Sube tu imagen",
+    "label.new.game.second": "Elige el número de piezas del rompecabezas.",
+    "label.new.game.third": "Jugar",
+    "label.new.game.tooltip.play": "Jugar",
+    "label.new.game.resolution.not.available": "El juego no está disponible en dispositivos con una resolución inferior a 720 px.",
+    "label.board.tooltip.zoom.in": "Acercar",
+    "label.board.tooltip.zoom.out": "Alejar",
+    "label.board.tooltip.full.image": "Ver solución",
+    "label.board.tooltip.preview": "Vista previa",
+    "label.board.tooltip.timer": "Tiempo",
+    "label.board.tooltip.fullscreen": "Pantalla completa",
+    "label.summary.congratulations": "Felicidades!",
+    "label.summary.completed": "Completaste las ",
+    "label.summary.pieces": " piezas",
+    "label.summary.time": "en un tiempo de ",
+    "label.summary.tooltip.play.again": "Jugar de nuevo"
+}
