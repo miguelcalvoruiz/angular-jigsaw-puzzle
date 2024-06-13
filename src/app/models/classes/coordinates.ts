@@ -19,4 +19,14 @@ export class Coordinates {
         this._x += vector.x;
         this._y += vector.y;
     }
+
+    public getVerticalReflection(axisOfSymmetry: number) {
+        const diff = axisOfSymmetry - this._x;
+        return new Coordinates(axisOfSymmetry + diff, this._y);
+    }
+
+    public getHorizontalReflection(axisOfSymmetry: number) {
+        const diff = axisOfSymmetry - this._y;
+        return new Coordinates(this._x, axisOfSymmetry + diff);
+    }
 }

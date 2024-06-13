@@ -1,4 +1,5 @@
 import { Canvas } from "./canvas";
+import { Direction } from "./connection";
 import { Coordinates } from "./coordinates";
 import { Jigsaw } from "./jigsaw";
 import { Piece } from "./piece";
@@ -62,26 +63,26 @@ export class Game {
         this._previewEnabled = !this._previewEnabled;
     }
 
-    public resetCanvasState() {
-        this.clearCanvas();
-        this.displayBoundaries();
-        if (this._previewEnabled) {
-            this.displayBackground();
-        }
-    }
-
-    public summaryCanvasState() {
-        this.clearCanvas();
-        this.displayBoundaries();
-        this.displayBackground(1);
-    }
-
     public drawJigsaw() {
         this.resetCanvasState();
 
         this.jigsaw.pieces.forEach(piece => {
             this.drawCutPiece(piece);
         });
+    }
+
+    public drawFinishedJigsaw() {
+        this.clearCanvas();
+        this.displayBoundaries();
+        this.displayBackground(1);
+    }
+
+    private resetCanvasState() {
+        this.clearCanvas();
+        this.displayBoundaries();
+        if (this._previewEnabled) {
+            this.displayBackground();
+        }
     }
 
     private clearCanvas() {
@@ -132,72 +133,130 @@ export class Game {
         this.canvas.context.moveTo(piece.destPosition.x, piece.destPosition.y);
 
         let startingPoint = new Coordinates(piece.destPosition.x, piece.destPosition.y);
+        let connection;
 
-        const horizontalOffsetBefore = Math.round(this.jigsaw.destPieceSize.width * 3 / 8);
-        const horizontalOffsetAfter = Math.round(this.jigsaw.destPieceSize.width * 5 / 8);
-
-        const verticalOffsetBefore = Math.round(this.jigsaw.destPieceSize.height * 3 / 8);
-        const verticalOffsetAfter = Math.round(this.jigsaw.destPieceSize.height * 5 / 8);
-
-        const curveConvexityDest = Math.round(this.jigsaw.destPieceSize.width * 1 / 5);
-        const curveConvexitySource = Math.round(this.jigsaw.sourcePieceSize.width * 1 / 5);
-
-        if (piece.connections.find(x => x.direction == "top")) {
-            this.drawHorizontalEdge(startingPoint, horizontalOffsetBefore, horizontalOffsetAfter, curveConvexityDest);
+        if (connection = piece.connections.find(x => x.direction == Direction.Top)) {
+            this.drawHorizontalBezierEdge(startingPoint, Direction.Top, connection.type);
+            startingPoint.addVector(new Coordinates(this.jigsaw.destPieceSize.width, 0));
+        } else {
+            startingPoint.addVector(new Coordinates(this.jigsaw.destPieceSize.width, 0));
+            this.canvas.context.lineTo(startingPoint.x, startingPoint.y);
         }
 
-        startingPoint.addVector(new Coordinates(this.jigsaw.destPieceSize.width, 0));
-        this.canvas.context.lineTo(startingPoint.x, startingPoint.y);
-
-        if (piece.connections.find(x => x.direction == "right")) {
-            this.drawVerticalEdge(startingPoint, verticalOffsetBefore, verticalOffsetAfter, curveConvexityDest);
+        if (connection = piece.connections.find(x => x.direction == Direction.Right)) {
+            this.drawVerticalBezierEdge(startingPoint, Direction.Right, connection.type);
+            startingPoint.addVector(new Coordinates(0, this.jigsaw.destPieceSize.height));
+        } else {
+            startingPoint.addVector(new Coordinates(0, this.jigsaw.destPieceSize.height));
+            this.canvas.context.lineTo(startingPoint.x, startingPoint.y);
         }
 
-        startingPoint.addVector(new Coordinates(0, this.jigsaw.destPieceSize.height));
-        this.canvas.context.lineTo(startingPoint.x, startingPoint.y);
-
-        if (piece.connections.find(x => x.direction == "bottom")) {
-            this.drawHorizontalEdge(startingPoint, -horizontalOffsetBefore, -horizontalOffsetAfter, curveConvexityDest);
+        if (connection = piece.connections.find(x => x.direction == Direction.Bottom)) {
+            this.drawHorizontalBezierEdge(startingPoint, Direction.Bottom, connection.type);
+            startingPoint.addVector(new Coordinates(-this.jigsaw.destPieceSize.width, 0));
+        } else {
+            startingPoint.addVector(new Coordinates(-this.jigsaw.destPieceSize.width, 0));
+            this.canvas.context.lineTo(startingPoint.x, startingPoint.y);
         }
 
-        startingPoint.addVector(new Coordinates(-this.jigsaw.destPieceSize.width, 0));
-        this.canvas.context.lineTo(startingPoint.x, startingPoint.y);
-
-        if (piece.connections.find(x => x.direction == "left")) {
-            this.drawVerticalEdge(startingPoint, -verticalOffsetBefore, -verticalOffsetAfter, curveConvexityDest);
+        if (connection = piece.connections.find(x => x.direction == Direction.Left)) {
+            this.drawVerticalBezierEdge(startingPoint, Direction.Left, connection.type);
+        } else {
+            this.canvas.context.lineTo(piece.destPosition.x, piece.destPosition.y);
         }
-
-        this.canvas.context.lineTo(piece.destPosition.x, piece.destPosition.y);
 
         this.canvas.context.stroke();
         this.canvas.context.clip();
 
+        const curveConvexitySource = Math.round(Math.max(this.jigsaw.sourcePieceSize.width, this.jigsaw.sourcePieceSize.height) * 0.1);
+        const curveConvexityDest = Math.round(Math.max(this.jigsaw.destPieceSize.width, this.jigsaw.destPieceSize.height) * 0.1);
+
         this.canvas.context.drawImage(
             this._image,
-            piece.sourcePosition.x, piece.sourcePosition.y,
-            this.jigsaw.sourcePieceSize.width + curveConvexitySource, this.jigsaw.sourcePieceSize.height + curveConvexitySource,
-            piece.destPosition.x, piece.destPosition.y,
-            this.jigsaw.destPieceSize.width + curveConvexityDest, this.jigsaw.destPieceSize.height + curveConvexityDest
+            piece.sourcePosition.x - curveConvexitySource, piece.sourcePosition.y - curveConvexitySource,
+            this.jigsaw.sourcePieceSize.width + 2 * curveConvexitySource, this.jigsaw.sourcePieceSize.height + 2 * curveConvexitySource,
+            piece.destPosition.x - curveConvexityDest, piece.destPosition.y - curveConvexityDest,
+            this.jigsaw.destPieceSize.width + 2 * curveConvexityDest, this.jigsaw.destPieceSize.height + 2 * curveConvexityDest
         );
 
         this.canvas.context.restore();
     }
 
-    private drawHorizontalEdge(startingPoint: Coordinates, offsetBefore: number, offsetAfter: number, curveConvexity: number) {
-        this.canvas.context.lineTo(startingPoint.x + offsetBefore, startingPoint.y);
-        this.canvas.context.bezierCurveTo(
-            startingPoint.x + offsetBefore, startingPoint.y + curveConvexity,
-            startingPoint.x + offsetAfter, startingPoint.y + curveConvexity,
-            startingPoint.x + offsetAfter, startingPoint.y
-        );
+    private drawHorizontalBezierEdge(start: Coordinates, direction: Direction, type: number) {
+        let controlPoints: Coordinates[][] = [];
+        const unit = this.jigsaw.destPieceSize.width;
+        const sign = direction == Direction.Top ? 1 : -1;
+
+        let cp1 = new Coordinates(start.x, start.y);
+        let cp2 = new Coordinates(start.x + sign * Math.round(unit * 0.4), start.y + type * Math.round(unit * 0.1));
+        let ep = new Coordinates(start.x + sign * Math.round(unit * 0.4), start.y + type * Math.round(unit * 0.075));
+        controlPoints.push([cp1, cp2, ep]);
+
+        cp1 = new Coordinates(ep.x, ep.y);
+        cp2 = new Coordinates(start.x + sign * Math.round(unit * 0.45), start.y + type * Math.round(unit * 0.05));
+        ep = new Coordinates(start.x + sign * Math.round(unit * 0.4), start.y);
+        controlPoints.push([cp1, cp2, ep]);
+
+        cp1 = new Coordinates(ep.x, ep.y);
+        cp2 = new Coordinates(start.x + sign * Math.round(unit * 0.25), start.y - type * Math.round(unit * 0.1));
+        ep = new Coordinates(start.x + sign * Math.round(unit * 0.5), start.y - type * Math.round(unit * 0.1));
+        controlPoints.push([cp1, cp2, ep]);
+
+        for (let i = controlPoints.length - 1; i >= 0; i--) {
+            const bezierSet = controlPoints[i];
+            let bezierSetReflection: Coordinates[] = [];
+
+            bezierSet.forEach(point => {
+                const pointReflection = point.getVerticalReflection(start.x + sign * (unit / 2));
+                bezierSetReflection.push(pointReflection);
+            });
+
+            controlPoints.push(bezierSetReflection.slice().reverse());
+        }
+
+        controlPoints.forEach(bezierSet => this.drawBezierCurve(bezierSet));
     }
 
-    private drawVerticalEdge(startingPoint: Coordinates, offsetBefore: number, offsetAfter: number, curveConvexity: number) {
-        this.canvas.context.lineTo(startingPoint.x, startingPoint.y + offsetBefore);
+    private drawVerticalBezierEdge(start: Coordinates, direction: Direction, type: number) {
+        let controlPoints: Coordinates[][] = [];
+        const unit = this.jigsaw.destPieceSize.height;
+        const sign = direction == Direction.Right ? 1 : -1;
+
+        let cp1 = new Coordinates(start.x, start.y);
+        let cp2 = new Coordinates(start.x + type * Math.round(unit * 0.1), start.y + sign * Math.round(unit * 0.4));
+        let ep = new Coordinates(start.x + type * Math.round(unit * 0.075), start.y + sign * Math.round(unit * 0.4));
+        controlPoints.push([cp1, cp2, ep]);
+
+        cp1 = new Coordinates(ep.x, ep.y);
+        cp2 = new Coordinates(start.x + type * Math.round(unit * 0.05), start.y + sign * Math.round(unit * 0.45));
+        ep = new Coordinates(start.x, start.y + sign * Math.round(unit * 0.4));
+        controlPoints.push([cp1, cp2, ep]);
+
+        cp1 = new Coordinates(ep.x, ep.y);
+        cp2 = new Coordinates(start.x - type * Math.round(unit * 0.1), start.y + sign * Math.round(unit * 0.25));
+        ep = new Coordinates(start.x - type * Math.round(unit * 0.1), start.y + sign * Math.round(unit * 0.5));
+        controlPoints.push([cp1, cp2, ep]);
+
+        for (let i = controlPoints.length - 1; i >= 0; i--) {
+            const bezierSet = controlPoints[i];
+            let bezierSetReflection: Coordinates[] = [];
+
+            bezierSet.forEach(point => {
+                const pointReflection = point.getHorizontalReflection(start.y + sign * (unit / 2));
+                bezierSetReflection.push(pointReflection);
+            });
+
+            controlPoints.push(bezierSetReflection.slice().reverse());
+        }
+
+        controlPoints.forEach(bezierSet => this.drawBezierCurve(bezierSet));
+    }
+
+    private drawBezierCurve(bezierSet: Coordinates[]) {
         this.canvas.context.bezierCurveTo(
-            startingPoint.x + curveConvexity, startingPoint.y + offsetBefore,
-            startingPoint.x + curveConvexity, startingPoint.y + offsetAfter,
-            startingPoint.x, startingPoint.y + offsetAfter
+            bezierSet[0].x, bezierSet[0].y,
+            bezierSet[1].x, bezierSet[1].y,
+            bezierSet[2].x, bezierSet[2].y,
         );
     }
 }

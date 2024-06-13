@@ -77,7 +77,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.gameProgress.progressBar.value == 100) {
       this.game.jigsaw.defaultSizeAndPosition();
-      this.game.summaryCanvasState();
+      this.game.drawFinishedJigsaw();
     } else {
       this.game.drawJigsaw();
     }
@@ -193,7 +193,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.gameProgress.progressBar.value == 100) {
         this.game.jigsaw.defaultSizeAndPosition();
         this.imageElement.nativeElement.style.display = 'none';
-        this.game.summaryCanvasState();
+        this.game.drawFinishedJigsaw();
       } else {
         this.game.drawJigsaw();
       }

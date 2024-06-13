@@ -1,4 +1,5 @@
 import { Canvas } from "./canvas";
+import { Connection, Direction } from "./connection";
 import { Coordinates } from "./coordinates";
 import { Piece } from "./piece";
 import { Size } from "./size";
@@ -95,13 +96,39 @@ export class Jigsaw {
         const targetX = this.position.x + col * this.destPieceSize.width;
         const targetY = this.position.y + row * this.destPieceSize.height;
 
+        let connections = [
+            new Connection(Direction.Left, row, col - 1),
+            new Connection(Direction.Right, row, col + 1),
+            new Connection(Direction.Top, row - 1, col),
+            new Connection(Direction.Bottom, row + 1, col)
+        ];
+
+        connections = connections.filter(connection => {
+            return connection.row >= 0 && connection.row < this.size.rows
+                && connection.col >= 0 && connection.col < this.size.cols;
+        });
+
+        connections.forEach(connection => {
+            if (connection.direction == Direction.Left) {
+                const leftAdjacent = this.getPiece(connection.row, connection.col);
+                connection.type = leftAdjacent!.connections.find(x => x.direction == Direction.Right)!.type;
+            } else if (connection.direction == Direction.Top) {
+                const rightAdjacent = this.getPiece(connection.row, connection.col);
+                connection.type = rightAdjacent!.connections.find(x => x.direction == Direction.Bottom)!.type;
+            } else {
+                let type = Math.random() < 0.5 ? -1 : 1;
+                connection.type = type;
+            }
+        });
+
         const piece = new Piece(
             this,
             row, col,
             this.size.rows, this.size.cols,
             sourceX, sourceY,
             destX, destY,
-            targetX, targetY
+            targetX, targetY,
+            connections
         );
 
         this._pieces.push(piece);
