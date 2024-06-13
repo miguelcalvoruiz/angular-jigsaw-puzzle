@@ -7,6 +7,8 @@ import { faPuzzlePiece, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { fadeEnterAnimation, fadeLeaveAnimation } from '../../shared/animation';
 import { BoardSettings } from '../../models/interfaces/boardSettiings';
 import { TranslateService } from '../../services/translate/translate.service';
+import { ProgressBar } from '../../models/interfaces/progressBar';
+import { GameProgress } from '../../models/interfaces/game-progress';
 
 @Component({
   selector: 'app-new-game',
@@ -63,8 +65,8 @@ export class NewGameComponent implements OnInit {
     const image = new Image();
     image.src = URL.createObjectURL(file);
     image.onload = () => {
-      const longerEdge = image.height >= image.width ? image.height : image.width;
-      const shorterEdge = image.height < image.width ? image.height : image.width;
+      const longerEdge = Math.max(image.height, image.width);
+      const shorterEdge = Math.min(image.height, image.width);
       this.sizing = [];
 
       for (let i = 4; i < 27; i += 2) {
@@ -103,7 +105,15 @@ export class NewGameComponent implements OnInit {
         cols: this.gameSettingsForm.value.cols as number,
         image: this.gameSettingsForm.value.image as File
       };
+      const progressBar: ProgressBar = {
+        currentPieces: 0,
+        allPieces: this.gameSettingsForm.controls['pieces'].value as number,
+        value: 0
+      };
+      const gameProgress: GameProgress = { progressBar, time: null };
+
       this.gameService.setBoardSettings(boardSettings);
+      this.gameService.setGameProgress(gameProgress);
       this.gameService.setGameSettings(gameSettings);
       this.router.navigateByUrl('game');
     } else {

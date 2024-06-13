@@ -43,8 +43,8 @@ export class Jigsaw {
         this._destPieceSize = new Size(this._size.width / cols, this._size.height / rows);
 
         this._offset = new Coordinates(
-            this._destPieceSize.width / 4,
-            this._destPieceSize.height / 4
+            Math.round(this._destPieceSize.width / 4),
+            Math.round(this._destPieceSize.height / 4)
         );
     }
 
@@ -98,6 +98,7 @@ export class Jigsaw {
         const piece = new Piece(
             this,
             row, col,
+            this.size.rows, this.size.cols,
             sourceX, sourceY,
             destX, destY,
             targetX, targetY
@@ -228,8 +229,8 @@ export class Jigsaw {
 
     private setOffset() {
         this._offset = new Coordinates(
-            this._destPieceSize.width / 4,
-            this._destPieceSize.height / 4
+            Math.round(this._destPieceSize.width / 4),
+            Math.round(this._destPieceSize.height / 4)
         );
     }
 

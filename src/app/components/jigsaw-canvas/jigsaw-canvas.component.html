@@ -3,5 +3,5 @@
 <img #image src="" alt="jigsaw image" class="img">
 
 <canvas #canvas class="jigsaw" (mousedown)="pickUpPiece($event)" (mousemove)="dragPiece($event)"
-    (mouseup)="dropPiece($event)">
+    (mouseup)="dropPiece($event)" (mouseleave)="dropPiece($event)">
 </canvas>

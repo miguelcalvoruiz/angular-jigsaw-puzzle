@@ -16,6 +16,7 @@ export class Piece {
     constructor(
         jigsaw: Jigsaw,
         row: number, col: number,
+        rowsNum: number, colsNum: number,
         sourceX: number, sourceY: number,
         destX: number, destY: number,
         targetX: number, targetY: number
@@ -37,6 +38,10 @@ export class Piece {
             new Connection('top', row - 1, col),
             new Connection('bottom', row + 1, col)
         );
+        this._connections = this._connections.filter(connection => {
+            return connection.row >= 0 && connection.row < rowsNum
+                && connection.col >= 0 && connection.col < colsNum;
+        });
     }
 
     public get row() {

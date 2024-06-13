@@ -39,9 +39,11 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
             this.game.jigsaw.zoom(this.boardSettings.zoomChange);
           }
 
-          this.drawJigsaw();
-
-          this.manageFullImage();
+          if (boardSettings.preview != this.game.previewEnabled) {
+            this.game.togglePreview();
+          }
+          this.toggleFullImage();
+          this.game.drawJigsaw();
         }
       }
     });
@@ -59,10 +61,7 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.initializeGame();
       this.setCanvasElementSize();
-      this.resetCanvasState();
-
       this.prepareJigsaw();
-      this.setGameProgress();
     }, 1000);
   }
 
@@ -78,9 +77,9 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.gameProgress.progressBar.value == 100) {
       this.game.jigsaw.defaultSizeAndPosition();
-      this.summaryCanvasState();
+      this.game.summaryCanvasState();
     } else {
-      this.drawJigsaw();
+      this.game.drawJigsaw();
     }
   }
 
@@ -88,41 +87,12 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.imageElement.nativeElement.src = URL.createObjectURL(this.gameSettings.image);
   }
 
-  initializeGame() {
-    const canvas = new Canvas(
-      this.canvasElement.nativeElement.getContext('2d')!
-    );
-
-    const jigsaw = new Jigsaw(
-      canvas,
-      this.gameSettings.rows, this.gameSettings.cols,
-      this.imageElement.nativeElement.width,
-      this.imageElement.nativeElement.height
-    );
-
-    this.game = new Game(canvas, jigsaw);
-  }
-
   setCanvasElementSize() {
     this.canvasElement.nativeElement.width = this.game.canvas.size.width;
     this.canvasElement.nativeElement.height = this.game.canvas.size.height;
   }
 
-  resetCanvasState() {
-    this.clearCanvas();
-    this.displayBoundaries();
-    if (this.boardSettings.preview) {
-      this.displayBackground();
-    }
-  }
-
-  summaryCanvasState() {
-    this.clearCanvas();
-    this.displayBoundaries();
-    this.displayBackground(1);
-  }
-
-  manageFullImage() {
+  toggleFullImage() {
     if (this.boardSettings.fullImage) {
       this.imageElement.nativeElement.style.display = 'initial';
     } else {
@@ -130,78 +100,23 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  clearCanvas() {
-    this.game.canvas.context.clearRect(
-      this.game.canvas.position.x, this.game.canvas.position.y,
-      this.game.canvas.size.width, this.game.canvas.size.height
+  initializeGame() {
+    const canvas = new Canvas(
+      this.canvasElement.nativeElement.getContext('2d')!
     );
-
-    this.game.canvas.context.fillStyle = 'rgba(76, 76, 76, 0.9)';
-    this.game.canvas.context.fillRect(
-      this.game.canvas.position.x, this.game.canvas.position.y,
-      this.game.canvas.size.width, this.game.canvas.size.height
+    const jigsaw = new Jigsaw(
+      canvas,
+      this.gameSettings.rows, this.gameSettings.cols,
+      this.imageElement.nativeElement.width,
+      this.imageElement.nativeElement.height
     );
-  }
-
-  displayBoundaries() {
-    this.game.canvas.context.beginPath();
-    this.game.canvas.context.rect(
-      this.game.jigsaw.position.x, this.game.jigsaw.position.y,
-      this.game.jigsaw.size.width, this.game.jigsaw.size.height
-    );
-    this.game.canvas.context.stroke();
-    this.game.canvas.context.save();
-  }
-
-  displayBackground(alpha = 0.4) {
-    this.game.canvas.context.save();
-    this.game.canvas.context.globalAlpha = alpha;
-    this.game.canvas.context.drawImage(
-      this.imageElement.nativeElement,
-      this.game.jigsaw.position.x, this.game.jigsaw.position.y,
-      this.game.jigsaw.size.width, this.game.jigsaw.size.height
-    );
-    this.game.canvas.context.restore();
+    this.game = new Game(canvas, jigsaw, this.imageElement.nativeElement);
   }
 
   prepareJigsaw() {
     this.game.jigsaw.createPieces();
-    this.drawJigsaw();
+    this.game.drawJigsaw();
     this.game.start();
-  }
-
-  setGameProgress() {
-    const progressBar: ProgressBar = {
-      currentPieces: 0,
-      allPieces: this.game.jigsaw.pieces.length,
-      value: 0
-    };
-    const gameProgress: GameProgress = { progressBar, time: null };
-
-    this.gameService.setGameProgress(gameProgress);
-  }
-
-  drawPiece(piece: Piece) {
-    this.game.canvas.context.drawImage(
-      this.imageElement.nativeElement,
-      piece.sourcePosition.x, piece.sourcePosition.y,
-      this.game.jigsaw.sourcePieceSize.width, this.game.jigsaw.sourcePieceSize.height,
-      piece.destPosition.x, piece.destPosition.y,
-      this.game.jigsaw.destPieceSize.width, this.game.jigsaw.destPieceSize.height
-    );
-
-    this.game.canvas.context.strokeRect(
-      piece.destPosition.x, piece.destPosition.y,
-      this.game.jigsaw.destPieceSize.width, this.game.jigsaw.destPieceSize.height
-    );
-  }
-
-  drawJigsaw() {
-    this.resetCanvasState();
-
-    this.game.jigsaw.pieces.forEach(piece => {
-      this.drawPiece(piece);
-    });
   }
 
   pickUpPiece(event: MouseEvent) {
@@ -244,11 +159,13 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
       this.game.canvasDragging = new Coordinates(event.clientX, event.clientY);
     }
 
-    this.drawJigsaw();
+    this.game.drawJigsaw();
   }
 
   dropPiece(event: MouseEvent) {
-    if (this.game.activePiece) {
+    if (this.game.canvasDragging) {
+      this.game.canvasDragging = null;
+    } else if (this.game.activePiece) {
       const adjacentPieces = this.game.jigsaw.getGroupOfAdjacentPieces(this.game.activePiece);
 
       if (this.isMouseOverTargetPosition(this.game.activePiece, event)) {
@@ -275,12 +192,12 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this.gameProgress.progressBar.value == 100) {
         this.game.jigsaw.defaultSizeAndPosition();
-        this.summaryCanvasState();
+        this.imageElement.nativeElement.style.display = 'none';
+        this.game.summaryCanvasState();
       } else {
-        this.drawJigsaw();
+        this.game.drawJigsaw();
       }
-    } else if (this.game.canvasDragging) {
-      this.game.canvasDragging = null;
+      this.game.activePiece = null;
     }
   }
 
@@ -321,8 +238,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const position = this.getMousePosition(event);
 
     return new Coordinates(
-      position.x - this.game.jigsaw.destPieceSize.width / 2,
-      position.y - this.game.jigsaw.destPieceSize.height / 2
+      position.x - Math.round(this.game.jigsaw.destPieceSize.width / 2),
+      position.y - Math.round(this.game.jigsaw.destPieceSize.height / 2)
     );
   }
 
@@ -330,8 +247,8 @@ export class JigsawCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const position = this.getMousePosition(event);
 
     return new Coordinates(
-      position.x - this.game.jigsaw.destPieceSize.width / 2 - this.game.activePiece!.destPosition.x,
-      position.y - this.game.jigsaw.destPieceSize.height / 2 - this.game.activePiece!.destPosition.y
+      position.x - Math.round(this.game.jigsaw.destPieceSize.width / 2) - this.game.activePiece!.destPosition.x,
+      position.y - Math.round(this.game.jigsaw.destPieceSize.height / 2) - this.game.activePiece!.destPosition.y
     );
   }
 }

@@ -1,6 +1,7 @@
 .jigsaw {
     position: absolute;
     left: 60px;
+    background-color: rgba( 76, 76, 76 , 0.9);
     cursor: grab;
 }
 
@@ -8,8 +9,8 @@
     display: none;
     position: fixed;
     z-index: 1;
-    max-width: 75%;
-    max-height: 75%;
+    max-width: 60%;
+    max-height: 60%;
     top: 40px;
     left: 85px;
     filter: drop-shadow(0 0 1rem #1a1c27);
